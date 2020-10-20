@@ -7,10 +7,10 @@ Param(
 
 Get-Module -Name OneRoster| Remove-Module; Import-Module .\OneRoster.psm1
 
-#$TLOG = ((".\Log\" + (Get-Date -Format u) +"-merge.log").Replace(" ", "-")).Replace(":", "-")
-#Start-Transcript -path $TLOG
+$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Filter.log").Replace(" ", "-")).Replace(":", "-")
+Start-Transcript -path $TLOG
 
-#$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 #$ErrorActionPreference = "Inquire"
 
 Function main_split_by_org

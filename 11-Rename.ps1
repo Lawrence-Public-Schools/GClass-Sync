@@ -10,6 +10,9 @@ Import-Module PSGSuite
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
+$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Rename.log").Replace(" ", "-")).Replace(":", "-")
+Start-Transcript -path $TLOG
+
 $ErrorActionPreference = "Stop"
 #$ErrorActionPreference = "Inquire"
 

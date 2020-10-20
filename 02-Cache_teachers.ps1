@@ -10,7 +10,10 @@ Import-Module PSGSuite
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
-#$ErrorActionPreference = "Stop"
+$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Teachers.log").Replace(" ", "-")).Replace(":", "-")
+Start-Transcript -path $TLOG
+
+$ErrorActionPreference = "Stop"
 #$ErrorActionPreference = "Inquire"
 
 filter dropdeaduser

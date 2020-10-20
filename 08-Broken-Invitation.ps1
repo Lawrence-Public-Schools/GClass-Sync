@@ -2,6 +2,12 @@
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
+$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Cleanup.log").Replace(" ", "-")).Replace(":", "-")
+Start-Transcript -path $TLOG
+
+$ErrorActionPreference = "Stop"
+#$ErrorActionPreference = "Inquire"
+
 Function remove_invitation
 {
     [OutputType('Google.Apis.Classroom.v1.Data.Invitation')]

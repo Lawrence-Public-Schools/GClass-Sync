@@ -6,7 +6,10 @@ Param(
 
 Get-Module -Name GClass | Remove-Module; Import-Module .\GClass.psm1
 
-#$ErrorActionPreference = "Stop"
+$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Roster.log").Replace(" ", "-")).Replace(":", "-")
+Start-Transcript -path $TLOG
+
+$ErrorActionPreference = "Stop"
 #$ErrorActionPreference = "Inquire"
 
 Function invite_class_student()
