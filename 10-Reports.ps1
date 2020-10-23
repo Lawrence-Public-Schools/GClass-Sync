@@ -9,7 +9,7 @@ Get-Module -Name GClass | Remove-Module; Import-Module .\GClass.psm1
 
 $Parameters = "classroom:num_courses_created,classroom:num_posts_created,classroom:role,classroom:last_interaction_time,accounts:admin_set_name,accounts:first_name,accounts:last_name,accounts:last_login_time,accounts:last_sso_time"
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Report.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Report.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 #$ErrorActionPreference = "Stop"
@@ -30,7 +30,7 @@ function Reports_Classroom_Usage
     If ($(Show-PSGSuiteConfig).ConfigName -ne $Domain)
     {
         Write-Host -Object "Switching to $($Domain)"
-        Set-PSGSuiteConfig $Domain
+        Set-PSGSuiteConfig -ConfigName $Domain -ErrorAction Continue
         $DNSDomain = $(Show-PSGSuiteConfig).Domain
     }
 

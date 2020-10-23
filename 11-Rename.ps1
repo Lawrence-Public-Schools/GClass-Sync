@@ -10,7 +10,7 @@ Import-Module PSGSuite
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Rename.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Rename.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 $ErrorActionPreference = "Stop"
@@ -27,7 +27,7 @@ Function Rename_students()
     If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
-        Set-PSGSuiteConfig STUDENTS
+        Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
     }
 
     $r = @()

@@ -2,7 +2,7 @@
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Cleanup.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Cleanup.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 $ErrorActionPreference = "Stop"
@@ -73,7 +73,7 @@ Function broken_invitation
     If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Set-PSGSuiteConfig TEACHERS
+        Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
     }
     $basepath = "."
     $Invite_Broken = Join-Path -Path $basepath -ChildPath "Broken_Invite.xml"

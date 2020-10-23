@@ -2,7 +2,7 @@
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Confirm.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Confirm.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 $ErrorActionPreference = "Stop"
@@ -118,7 +118,7 @@ Function confirm_invitation
     If ($(Show-PSGSuiteConfig).ConfigName -ne $ConfigProfile)
     {
         Write-Host -Object "Switching to $($ConfigProfile)"
-        Set-PSGSuiteConfig $ConfigProfile
+        Set-PSGSuiteConfig -ConfigName $ConfigProfile -ErrorAction Continue
     }
     $basepath = "."
     $Invite_File = Join-Path -Path $basepath -ChildPath "TODO_Invite.xml"

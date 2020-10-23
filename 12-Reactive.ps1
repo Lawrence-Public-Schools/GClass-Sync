@@ -10,7 +10,7 @@ Import-Module PSGSuite
 Get-Module -Name PSGSHelp | Remove-Module
 Import-Module $PSScriptRoot\PSGSHelp.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Reactive.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Reactive.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 #$ErrorActionPreference = "Stop"
@@ -27,7 +27,7 @@ Function Reactive_students()
     If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
-        Set-PSGSuiteConfig STUDENTS
+        Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
     }
 
     Write-Host -Object "Making list of users that should be active"
@@ -74,7 +74,7 @@ Function Disactive_students()
     If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
-        Set-PSGSuiteConfig STUDENTS
+        Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
     }
 
     Write-Host -Object "Making list of users that should be disabled"

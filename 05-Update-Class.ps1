@@ -6,7 +6,7 @@ Param(
 
 Get-Module -Name GClass | Remove-Module; Import-Module .\GClass.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Update.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Update.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 #$ErrorActionPreference = "Stop"
@@ -464,7 +464,7 @@ Function update_classes()
     If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Set-PSGSuiteConfig TEACHERS
+        Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
     }
 
     $classes_C = Read-OROrgs -FolderPath $WorkFolder | ForEach-Object {
