@@ -7,7 +7,7 @@ Param(
 
 Get-Module -Name OneRoster| Remove-Module; Import-Module .\OneRoster.psm1
 
-$TLOG = ((".\Log\" + (Get-Date -Format u) +"-Filter.log").Replace(" ", "-")).Replace(":", "-")
+$TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Filter.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
 $ErrorActionPreference = "Stop"
