@@ -2291,7 +2291,7 @@ Function Limit-ORUserBysourcedId #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [String[]]
@@ -2312,7 +2312,7 @@ Function Limit-ORUserBystatus #UNUSED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [OR_StatusType[]]
@@ -2333,7 +2333,7 @@ Function Limit-ORUserByRole #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [OR_RoleType[]]
@@ -2353,7 +2353,7 @@ Function Limit-ORUserByNotRole #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [OR_RoleType[]]
@@ -2375,7 +2375,7 @@ Function Limit-OREnrollmentBystatus #UNUSED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [Parameter(Mandatory = $false)]
         [OR_StatusType[]]
@@ -2400,7 +2400,7 @@ Function Limit-OREnrollmentByclassSourcedId #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [Parameter(Mandatory = $false)]
         [String[]]
@@ -2421,7 +2421,7 @@ Function Limit-OREnrollmentByschoolSourcedId #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [Parameter(Mandatory = $false)]
         [String[]]
@@ -2443,7 +2443,7 @@ Function Limit-OREnrollmentNotByuserSourcedId #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [Parameter(Mandatory = $false)]
         [string[]]
@@ -2464,7 +2464,7 @@ Function Limit-OREnrollmentByrole #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [OR_RoleType[]]
@@ -2484,7 +2484,7 @@ Function Limit-OREnrollmentIsPrimary #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [Parameter(Mandatory = $false)]
         [bool]
@@ -2504,7 +2504,7 @@ Function Limit-OREnrollmentByDate #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E,
         [DateTime]
         $Date = 0,
@@ -2536,7 +2536,7 @@ Function Limit-OREnrollmentOnlyPrimaryTeacher #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_enrollment[]]
+        #[OR_enrollment[]]
         $enrollment_E
     )
     PROCESS
@@ -2553,7 +2553,7 @@ Function Limit-ORUserByschoolSourcedId #UNUSED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [String[]]
@@ -2574,7 +2574,7 @@ Function Limit-ORUserByorgSourcedIds #USED
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]
-        [OR_user[]]
+        #[OR_user[]]
         $user_E,
         [Parameter(Mandatory = $true)]
         [String[]]
