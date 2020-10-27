@@ -597,16 +597,17 @@ Function Get-_GSCourse
         {
             $Cache_Writeback = $false
         }
+        ElseIf ($BypassCache -eq $false -and $Allow_Course_Cache -eq $true)
+        {
+            $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
+        }
       
         If ($Cache_GSCourseAlias.Count -gt 0)
         {
             $Cache_Writeback_Alias = $false
         }
-
-        If ($BypassCache -eq $false -and $Allow_Course_Cache -eq $true)
+        ElseIf ($BypassCache -eq $false -and $Allow_Course_Cache -eq $true)
         {
-            $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
-
             $Cache_GSCourseAlias += Import-_GSCourseAlias -Domain $Cache_Domain
         }
     }
@@ -614,12 +615,12 @@ Function Get-_GSCourse
     {
         $r = @()
         $AId = $null
+        $RId = $null
         If ($SkipCache -eq $false -and $Allow_Course_Cache -eq $true)
         {
             If ($Id -like "d:*" -or $Id -like "p:*")
             {
                 $AId = $Id
-                $RId = $null
                 If ($Cache_GSCourseAlias.Count -ge 0)
                 {
                     $RId = $Cache_GSCourseAlias | Where-Object -Property CourseAlias -EQ -Value $AId | Select-Object -ExpandProperty CourseId
@@ -693,16 +694,20 @@ Function Get-_GSCourse
                 Throw $Exc.Exception.InnerException
             }
         }
-        If ($r.Count -eq 1 -and $null -ne $AId)
+        If ($r.Count -eq 1 -and $null -eq $RId)
         {
             If ($Id -like "d:*" -or $Id -like "p:*" -and $Allow_Course_Cache -eq $true)
             {
-                $Cache_GSCourseAlias = $Cache_GSCourseAlias | Where-Object -Property CourseId -NotIn -Value $r.Id
+                $Cache_GSCourseAlias_Old = $Cache_GSCourseAlias
+                $Cache_GSCourseAlias_New = @()
+                $Cache_GSCourseAlias_New += $Cache_GSCourseAlias_Old | Where-Object -Property CourseAlias -NotIn -Value $AId | Where-Object -Property CourseId -NotIn -Value $r.Id
                 $NAlias = [PSCustomObject]@{
                     CourseAlias    = $Id
                     CourseId       = $r.Id
                                            }
+                $Cache_GSCourseAlias = @()
                 $Cache_GSCourseAlias += $NAlias
+                $Cache_GSCourseAlias += $Cache_GSCourseAlias_New
             }
         }
         If ($Allow_Course_Cache -eq $true)
@@ -716,8 +721,14 @@ Function Get-_GSCourse
     {
         If ($BypassCache -eq $false -and $Cache_Changed -eq $true -and $Allow_Course_Cache -eq $true)
         {
-            Export-_GSCourse -InputObject $Cache_GSCourse -Domain $Cache_Domain
-            Export-_GSCourseAlias -InputObject $Cache_GSCourseAlias -Domain $Cache_Domain
+            If ($Cache_Writeback -eq $true)
+            {
+                Export-_GSCourse -InputObject $Cache_GSCourse -Domain $Cache_Domain
+            }
+            If ($Cache_Writeback_Alias -eq $true)
+            {
+                Export-_GSCourseAlias -InputObject $Cache_GSCourseAlias -Domain $Cache_Domain
+            }
         }
     }
 }
