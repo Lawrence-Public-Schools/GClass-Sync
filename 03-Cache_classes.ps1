@@ -32,7 +32,7 @@ Function Find_classes()
     #Write-Host -Object "Getting fresh Class data"
     #Read-ORclasses -FolderPath $WorkFolder -LoadXML $true | Select-Object -ExpandProperty sourcedId | New-ClassAlias | Get-_GSCourse -SkipCache $true | Out-Null
     #Write-Host -Object "Done getting Class data"
-    Return Read-OROrgs -FolderPath $WorkFolder | ForEach-Object -Process {
+    Read-OROrgs -FolderPath $WorkFolder | ForEach-Object -Process {
         #Imports
         Write-Host -Object "Importing classes For: $($_.name)"
         $classes_I = @()
@@ -41,15 +41,13 @@ Function Find_classes()
         If ($classes_I.Count -gt 0)
         {
             Write-Host -Object "Caching classes datas: $($classes_I.Count)"
-            $classes_I.sourcedId | New-ClassAlias | Get-_GSCourse -SkipCache $true
+            $classes_I.sourcedId | New-ClassAlias
         }
         Else
         {
             Write-Host -Object "No classes to cache"
         }
-
-        Return
-    }
+    } | Get-_GSCourse -SkipCache $true
 }
 
 Function Link_classes()
@@ -72,7 +70,7 @@ Function Link_classes()
     #Write-Host -Object "Getting fresh Class data"
     #Read-ORclasses -FolderPath $WorkFolder -LoadXML $true | Select-Object -ExpandProperty sourcedId | New-ClassAlias | Get-_GSCourse -SkipCache $true | Out-Null
     #Write-Host -Object "Done getting Class data"
-    Return Read-OROrgs -FolderPath $WorkFolder | ForEach-Object -Process {
+    Read-OROrgs -FolderPath $WorkFolder | ForEach-Object -Process {
         #Imports
         Write-Host -Object "Importing classes For: $($_.name)"
         $classes_I = @()
@@ -81,15 +79,13 @@ Function Link_classes()
         If ($classes_I.Count -gt 0)
         {
             Write-Host -Object "Caching classes links: $($classes_I.Count)"
-            $classes_I.sourcedId | Update-ClassLink -SkipCache $false -Domain $(Show-PSGSuiteConfig).Domain
+            $classes_I.sourcedId
         }
         Else
         {
             Write-Host -Object "No classes to cache"
         }
-
-        Return
-    }
+    } | Update-ClassLink -SkipCache $false -Domain $(Show-PSGSuiteConfig).Domain
 }
 
 Function Export-classes
