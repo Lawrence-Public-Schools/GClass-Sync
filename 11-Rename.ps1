@@ -24,7 +24,7 @@ Function Rename_students()
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
         Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue

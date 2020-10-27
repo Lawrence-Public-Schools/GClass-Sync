@@ -215,7 +215,7 @@ Function make_classes()
     Write-Host -Object "Loading ClassLink"
     $GoodLink = Import-ClassLink | Where-Object -Property CourseState -NE $null | Select-Object -ExpandProperty sourcedId
 
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
         Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue

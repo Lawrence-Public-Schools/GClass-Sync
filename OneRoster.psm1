@@ -2406,9 +2406,9 @@ Function Limit-OREnrollmentByclassSourcedId #USED
         [String[]]
         $classSourcedId
     )
- 
     PROCESS
     {
+        Write-Warning "Limit-OREnrollmentByclassSourcedId"
         $enrollment_E | Where-Object -Property classSourcedId -In -Value $classSourcedId
     }
 }

@@ -1,4 +1,4 @@
-﻿$Allow_Course_Cache = $false
+﻿$Allow_Course_Cache = $true
 
 $PSGSHelp_Source = @"
 
@@ -420,7 +420,6 @@ Function Clear-_GSCourseAlias
 
 Function Import-_GSCourseAlias
 {
-    [OutputType('System.Collections.Hashtable')]
     [CmdletBinding()]
     Param
     (
@@ -436,15 +435,17 @@ Function Import-_GSCourseAlias
     {
         If ($Allow_Course_Cache -eq $false)
         {
-            Return @{}
+            Return @()
         }
         $Cache_File = Join-Path -Path $Path -ChildPath "Cache_GSCourseAlias_$($Domain).xml"
         If ((Test-Path -Path $Cache_File -PathType Leaf))
         {
-            $r = Import-Clixml -Path $Cache_File
-            Return ($r)
+            Import-Clixml -Path $Cache_File
         }
-        Return @{}
+        Else
+        {
+            Return @()
+        }
     }
 }
 
@@ -582,8 +583,7 @@ Function Get-_GSCourse
         [AllowNull()]
         $Cache_GSCourse = @(),
         [parameter(Mandatory = $false)]
-        [System.Collections.Hashtable]
-        $Cache_GSCourseAlias = @{}
+        $Cache_GSCourseAlias = @()
     )
     BEGIN
     {
@@ -607,7 +607,7 @@ Function Get-_GSCourse
         {
             $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
 
-            $Cache_GSCourseAlias = Import-_GSCourseAlias -Domain $Cache_Domain
+            $Cache_GSCourseAlias += Import-_GSCourseAlias -Domain $Cache_Domain
         }
     }
     PROCESS
@@ -619,9 +619,14 @@ Function Get-_GSCourse
             If ($Id -like "d:*" -or $Id -like "p:*")
             {
                 $AId = $Id
-                If ($Cache_GSCourseAlias -ne $null -and $Cache_GSCourseAlias[$Id])
+                $RId = $null
+                If ($Cache_GSCourseAlias.Count -ge 0)
                 {
-                    $Id = $Cache_GSCourseAlias[$Id]
+                    $RId = $Cache_GSCourseAlias | Where-Object -Property CourseAlias -EQ -Value $AId | Select-Object -ExpandProperty CourseId
+                }
+                If ($null -ne $RId)
+                {
+                    $Id = $RId
                 }
             }
 
@@ -692,7 +697,12 @@ Function Get-_GSCourse
         {
             If ($Id -like "d:*" -or $Id -like "p:*" -and $Allow_Course_Cache -eq $true)
             {
-                $Cache_GSCourseAlias[$AId] = $r.Id
+                $Cache_GSCourseAlias = $Cache_GSCourseAlias | Where-Object -Property CourseId -NotIn -Value $r.Id
+                $NAlias = [PSCustomObject]@{
+                    CourseAlias    = $Id
+                    CourseId       = $r.Id
+                                           }
+                $Cache_GSCourseAlias += $NAlias
             }
         }
         If ($Allow_Course_Cache -eq $true)

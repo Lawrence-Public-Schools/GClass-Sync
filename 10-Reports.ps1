@@ -27,7 +27,7 @@ function Reports_Classroom_Usage
         [Parameter(Mandatory = $true)]
         [String]$ReportFolder
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne $Domain)
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     {
         Write-Host -Object "Switching to $($Domain)"
         Set-PSGSuiteConfig -ConfigName $Domain -ErrorAction Continue
@@ -84,7 +84,7 @@ Function Classroom_Listing {
         [String]$ReportFolder
     )
     
-    #If ($(Show-PSGSuiteConfig).ConfigName -ne $Domain)
+    #If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     #{
     #    Write-Host -Object "Switching to $($Domain)"
     #    Set-PSGSuiteConfig $Domain

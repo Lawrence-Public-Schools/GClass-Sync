@@ -24,7 +24,6 @@ Function invite_class_student()
         $Class,
         [Parameter(Mandatory=$true)]
         [AllowNull()]
-        [OutputType('System.Collections.Hashtable')]
         $Cache_CourseAlias,
         [Parameter(Mandatory=$true)]
         [AllowNull()]
@@ -64,6 +63,7 @@ Function invite_class_student()
         $enrollments_O_G = $enrollments_O | Group-Object -Property classSourcedId
         Write-Host -Object "Filtering enrollments for students"
         $enrollments_S = $enrollments_I | Limit-OREnrollmentByrole -role student
+        $enrollments_S_G = $enrollments_S | Group-Object -Property classSourcedId
         Write-Host -Object "Importing users"
         $users_I = Read-ORUsers -FolderPath $WorkFolder -Org $Org -LoadXML $true
         Write-Host -Object "Filtering users for students"
@@ -93,7 +93,7 @@ Function invite_class_student()
         }
 
         $GCR = @()
-        $GCR += Get-_GSCourse -Id $ClassId -CacheOnly $true -Cache_GSCourse $Cache_Course -Cache_GSCourseAlias $Cache_CourseAlias
+        $GCR += Get-_GSCourse -Id $ClassId -BypassCache $true -CacheOnly $true -Cache_GSCourse $Cache_Course -Cache_GSCourseAlias $Cache_CourseAlias
 
         If ($GCR.Count -eq 0)
         {
@@ -115,7 +115,7 @@ Function invite_class_student()
         $enrollments_C_O = @()
         If ($enrollments_O.Count -gt 0 -and $null -eq $Teacher) #Look in the local school cache
         {
-            $enrollments_C += ($enrollments_O_G | Where-Object -Property Name -EQ -Value $Class.sourcedId).Group #$enrollments_O | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
+            $enrollments_C += $enrollments_O_G | Where-Object -Property Name -CEQ -Value $Class.sourcedId | Select-Object -ExpandProperty Group #$enrollments_O | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
             If ($enrollments_C.Count -gt 0)
             {
                 $users_C += $users_T | Limit-ORUserBySourcedId -sourcedId $enrollments_C.userSourcedId
@@ -243,7 +243,7 @@ Function invite_class_student()
 
         $enrollments_S_ = @()
         $enrollments_S_O = @()
-        $enrollments_S_ += $enrollments_S | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
+        $enrollments_S_ += $enrollments_S_G | Where-Object -Property Name -CEQ $Class.sourcedId | Select-Object -ExpandProperty Group #$enrollments_S | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
         $users_S_ = @()
         If ($enrollments_S_.Count -gt 0)
         {
@@ -378,7 +378,7 @@ Function add_students()
         [String]$WorkFolder
     )
 
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
         Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue

@@ -24,14 +24,14 @@ Function Reactive_students()
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
         Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
     }
 
     Write-Host -Object "Making list of users that should be active"
-    $emails = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property enabledUser -EQ -Value $true | Select-Object -ExpandProperty email
+    $emails = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property enabledUser -EQ -Value $true | Where-Object -Property role -EQ -Value ([OR_RoleType]::student) | Select-Object -ExpandProperty email
     Write-Host -Object "There should $($emails.Count) active users"
     Write-Host -Object "Getting List of inactives Google accounts users"
     $GSUsers = Get-GSUser -Filter "isSuspended=true" -Projection Basic | Where-Object PrimaryEmail -In $emails
@@ -71,14 +71,14 @@ Function Disactive_students()
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
         Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
     }
 
     Write-Host -Object "Making list of users that should be disabled"
-    $emails = Read-ORUsers -FolderPath $WorkFolder -LoadXML $false | Where-Object -Property enabledUser -EQ -Value $false | Select-Object -ExpandProperty email
+    $emails = Read-ORUsers -FolderPath $WorkFolder -LoadXML $false | Where-Object -Property enabledUser -EQ -Value $false | Where-Object -Property role -EQ -Value ([OR_RoleType]::student) | Select-Object -ExpandProperty email
     Write-Host -Object "There should $($emails.Count) disabled users"
     Write-Host -Object "Getting List of actives Google accounts users"
     $GSUsers = Get-GSUser -Filter "isSuspended=False" -Projection Basic

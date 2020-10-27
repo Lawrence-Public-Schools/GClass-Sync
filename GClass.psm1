@@ -4,7 +4,7 @@ Import-Module PSGSuite
 Get-Module -Name PSGSHelp | Remove-Module;Import-Module .\PSGSHelp.psm1
 
 
-Function New-ClassAlias()
+Function New-ClassAlias
 {
     [OutputType('String')]
     [CmdletBinding()]
@@ -31,7 +31,7 @@ Function Get-ClassLink
         [Boolean]
         $SkipCache = $true,
         $Cache_GSCourse = @(),
-        $Cache_GSCourseAlias = @{}
+        $Cache_GSCourseAlias = @()
 
     )
     BEGIN
@@ -157,7 +157,7 @@ Function Update-ClassLink
         $GoodLink = @()
         $GoodLink += Import-ClassLink -Path $Path
         $Cache_GSCourse = @()
-        $Cache_GSCourseAlias = @{}
+        $Cache_GSCourseAlias = @()
         If (-Not $SkipCache)
         {
             $Cache_GSCourse = Import-_GSCourse -Domain $Domain

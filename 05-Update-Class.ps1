@@ -49,8 +49,12 @@ Function update_per_class()
         Write-Host -Object "Filtering enrollments for primary teachers, normal teachers, aides then admins"
         $enrollments_I_G = $enrollments_I | Group-Object -Property role
         $enrollments_O = ($enrollments_I_G | Where-Object -Property Name -In -Value ("teacher","aide","administrator")).Group
+
+        $enrollments_O_G = $enrollments_O | Group-Object -Property classSourcedId
         Write-Host -Object "Filtering enrollments for students"
         $enrollments_S = ($enrollments_I_G | Where-Object -Property Name -Eq -Value "student").Group
+        $enrollments_S_G = $enrollments_S | Group-Object -Property classSourcedId
+
         $Default_Domain = (Show-PSGSuiteConfig).Domain
         Write-Host -Object "Update classes metadata"
         Write-Progress -Activity "Updating Google Classrooms' Metadata" -Status "Processing $($Class_Count) Classes" -Id 0 -PercentComplete 0
@@ -65,7 +69,7 @@ Function update_per_class()
         $sourcedId = $Class.sourcedId
         $ClassId = $sourcedId | New-ClassAlias
         $Course = $null
-        $Course = Get-_GSCourse -Id $ClassId -Cache_GSCourse $Cache_Course -Cache_GSCourseAlias $Cache_CourseAlias
+        $Course = Get-_GSCourse -BypassCache $true -Id $ClassId -Cache_GSCourse $Cache_Course -Cache_GSCourseAlias $Cache_CourseAlias
         $bState = $false
         If ($null -eq $Course)
         {
@@ -79,7 +83,7 @@ Function update_per_class()
         }
         $CourseName = $Course.Name
         $enrollments_S_ = @()
-        $enrollments_S_ += $enrollments_S | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
+        $enrollments_S_ += $enrollments_S_G | Where-Object -Property Name -CEQ $Class.sourcedId | Select-Object -ExpandProperty Group #$enrollments_S | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
         $Room = $null
         $Section = $null
         Switch ($Course.CourseState)
@@ -213,7 +217,7 @@ Function update_per_class()
         $enrollments_C_O = @()
         If ($enrollments_O.Count -gt 0) #Look in the local school cache
         {
-            $enrollments_C += $enrollments_O | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
+            $enrollments_C += $enrollments_O_G | Where-Object -Property Name -CEQ $Class.sourcedId | Select-Object -ExpandProperty Group #$enrollments_O | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
             If ($enrollments_C.Count -gt 0)
             {
                 $users_C += $Cache_Teachers | Limit-ORUserBySourcedId -sourcedId $enrollments_C.userSourcedId
@@ -461,7 +465,7 @@ Function update_classes()
         [String]$WorkFolder
     )
 
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
         Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue

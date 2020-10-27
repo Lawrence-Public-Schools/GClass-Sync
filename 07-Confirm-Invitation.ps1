@@ -115,7 +115,7 @@ Function confirm_invitation
         [Parameter(Mandatory=$false)]
         [String]$ConfigProfile = "STUDENTS"
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne $ConfigProfile)
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $ConfigProfile)
     {
         Write-Host -Object "Switching to $($ConfigProfile)"
         Set-PSGSuiteConfig -ConfigName $ConfigProfile -ErrorAction Continue

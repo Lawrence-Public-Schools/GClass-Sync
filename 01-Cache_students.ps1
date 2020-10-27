@@ -36,7 +36,7 @@ Function Find_students()
     )
     $TEACHERS_Domain = Get-PSGSuiteConfig -ConfigName TEACHERS -PassThru | Select-Object -ExpandProperty Domain
     $STUDENTS_Domain = Get-PSGSuiteConfig -ConfigName STUDENTS -PassThru | Select-Object -ExpandProperty Domain
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "STUDENTS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
         Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue

@@ -46,7 +46,7 @@ function Add_Admins_to_Org
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    If ($(Show-PSGSuiteConfig).ConfigName -ne "TEACHERS")
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
         Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
