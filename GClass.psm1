@@ -160,8 +160,8 @@ Function Update-ClassLink
         $Cache_GSCourseAlias = @()
         If (-Not $SkipCache)
         {
-            $Cache_GSCourse = Import-_GSCourse -Domain $Domain
-            $Cache_GSCourseAlias = Import-_GSCourseAlias -Domain $Domain
+            $Cache_GSCourse += Import-_GSCourse -Domain $Domain
+            $Cache_GSCourseAlias += Import-_GSCourseAlias -Domain $Domain
         }
     }
     PROCESS
