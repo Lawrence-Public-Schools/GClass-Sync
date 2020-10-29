@@ -49,7 +49,7 @@ function Add_Admins_to_Org
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     $Admins_CSV = Join-Path -Path "." -ChildPath "Admins.csv"

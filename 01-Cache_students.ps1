@@ -39,7 +39,7 @@ Function Find_students()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "STUDENTS")
     {
         Write-Host -Object "Switching to STUDENTS"
-        Set-PSGSuiteConfig -ConfigName STUDENTS -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName STUDENTS
     }
 
     $bad = @()

@@ -30,7 +30,7 @@ function Reports_Classroom_Usage
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     {
         Write-Host -Object "Switching to $($Domain)"
-        Set-PSGSuiteConfig -ConfigName $Domain -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName $Domain
         $DNSDomain = $(Show-PSGSuiteConfig).Domain
     }
 
@@ -87,7 +87,7 @@ Function Classroom_Listing {
     #If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     #{
     #    Write-Host -Object "Switching to $($Domain)"
-    #    Set-PSGSuiteConfig $Domain
+    #    Get-PSGSuiteConfig -ConfigName $Domain
     #    $DNSDomain = $(Show-PSGSuiteConfig).Domain
     #}
     
@@ -123,6 +123,6 @@ Function Classroom_Listing {
     } -Verbose | Export-Csv -LiteralPath $Report_FP -Encoding UTF8 -NoTypeInformation
 }
 
-#$r = Reports_Classroom_Usage -WorkFolder $WorkFolder -Domain  -ReportFolder $ReportFolder
+#$r = Reports_Classroom_Usage -WorkFolder $WorkFolder -Domain -ReportFolder $ReportFolder
 #$r = Reports_Classroom_Usage -WorkFolder $WorkFolder -Domain STUDENTS -ReportFolder $ReportFolder
 $r = Classroom_Listing -WorkFolder $WorkFolder -Domain TEACHERS -ReportFolder $ReportFolder

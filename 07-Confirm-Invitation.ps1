@@ -118,7 +118,7 @@ Function confirm_invitation
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $ConfigProfile)
     {
         Write-Host -Object "Switching to $($ConfigProfile)"
-        Set-PSGSuiteConfig -ConfigName $ConfigProfile -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName $ConfigProfile
     }
     $basepath = "."
     $Invite_File = Join-Path -Path $basepath -ChildPath "TODO_Invite.xml"

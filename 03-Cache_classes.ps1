@@ -24,7 +24,7 @@ Function Find_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     #Clear-_GSCourse -Domain $(Show-PSGSuiteConfig).Domain
@@ -62,7 +62,7 @@ Function Link_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Set-PSGSuiteConfig -ConfigName TEACHERS -ErrorAction Continue
+        Get-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     #Clear-_GSCourse -Domain $(Show-PSGSuiteConfig).Domain
