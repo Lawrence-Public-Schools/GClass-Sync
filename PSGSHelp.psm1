@@ -583,6 +583,7 @@ Function Get-_GSCourse
         [AllowNull()]
         $Cache_GSCourse = @(),
         [parameter(Mandatory = $false)]
+        #[System.Collections.Hashtable]
         $Cache_GSCourseAlias = @()
     )
     BEGIN
@@ -621,6 +622,7 @@ Function Get-_GSCourse
             If ($Id -like "d:*" -or $Id -like "p:*")
             {
                 $AId = $Id
+                $RId = $null
                 If ($Cache_GSCourseAlias.Count -ge 0)
                 {
                     $RId = $Cache_GSCourseAlias | Where-Object -Property CourseAlias -EQ -Value $AId | Select-Object -ExpandProperty CourseId
