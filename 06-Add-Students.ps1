@@ -381,7 +381,7 @@ Function add_students()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     $Cache_Domain = $(Show-PSGSuiteConfig).Domain

@@ -218,7 +218,7 @@ Function make_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     Read-OROrgs -FolderPath $WorkFolder | ForEach-Object -Begin {

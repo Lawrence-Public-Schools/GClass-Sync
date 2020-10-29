@@ -30,7 +30,7 @@ function Reports_Classroom_Usage
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     {
         Write-Host -Object "Switching to $($Domain)"
-        Get-PSGSuiteConfig -ConfigName $Domain
+        Switch-PSGSuiteConfig -ConfigName $Domain
         $DNSDomain = $(Show-PSGSuiteConfig).Domain
     }
 
@@ -87,7 +87,7 @@ Function Classroom_Listing {
     #If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
     #{
     #    Write-Host -Object "Switching to $($Domain)"
-    #    Get-PSGSuiteConfig -ConfigName $Domain
+    #    Switch-PSGSuiteConfig -ConfigName $Domain
     #    $DNSDomain = $(Show-PSGSuiteConfig).Domain
     #}
     

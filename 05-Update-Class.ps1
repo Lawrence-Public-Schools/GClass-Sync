@@ -468,7 +468,7 @@ Function update_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     $classes_C = Read-OROrgs -FolderPath $WorkFolder | ForEach-Object {

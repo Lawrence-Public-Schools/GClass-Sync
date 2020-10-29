@@ -73,7 +73,7 @@ Function broken_invitation
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
     $basepath = "."
     $Invite_Broken = Join-Path -Path $basepath -ChildPath "Broken_Invite.xml"

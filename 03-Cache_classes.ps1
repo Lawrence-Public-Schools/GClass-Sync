@@ -24,7 +24,7 @@ Function Find_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     #Clear-_GSCourse -Domain $(Show-PSGSuiteConfig).Domain
@@ -62,7 +62,7 @@ Function Link_classes()
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
     {
         Write-Host -Object "Switching to TEACHERS"
-        Get-PSGSuiteConfig -ConfigName TEACHERS
+        Switch-PSGSuiteConfig -ConfigName TEACHERS
     }
 
     #Clear-_GSCourse -Domain $(Show-PSGSuiteConfig).Domain
@@ -96,7 +96,7 @@ Function Export-classes
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    $r = Find_classes -WorkFolder $WorkFolder
+    #$r = Find_classes -WorkFolder $WorkFolder
     $r = Link_classes -WorkFolder $WorkFolder
     #Export-ClassLink -InputObject $r
     #Return $r
