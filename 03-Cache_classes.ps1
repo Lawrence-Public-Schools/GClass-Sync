@@ -96,7 +96,7 @@ Function Export-classes
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder
     )
-    #$r = Find_classes -WorkFolder $WorkFolder
+    $r = Find_classes -WorkFolder $WorkFolder
     $r = Link_classes -WorkFolder $WorkFolder
     #Export-ClassLink -InputObject $r
     #Return $r
