@@ -156,6 +156,7 @@ Function Update-ClassLink
     {
         $GoodLink = @()
         $GoodLink += Import-ClassLink -Path $Path
+        $NewLink = @()
         $Cache_GSCourse = @()
         $Cache_GSCourseAlias = @()
         If (-Not $SkipCache)
@@ -170,12 +171,13 @@ Function Update-ClassLink
         $GoodLink = @() + ($GoodLink | Where-Object -Property sourcedId -NotIn $sourcedId)
         #Write-Verbose "Update: $($GoodLink.Count)"
         Write-Verbose "Updating Class Cache data for: $($sourcedId)"
-        $GoodLink += $sourcedId | Get-ClassLink -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias
+        $NewLink += $sourcedId | Get-ClassLink -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias
         #Write-Verbose "Refresh: $($GoodLink.Count)"
     }
     END
     {
-        Export-ClassLink -InputObject $GoodLink -Path $Path
+        $NewLink  += ($GoodLink | Where-Object -Property sourcedId -NotIn $NewLink.sourcedId)
+        Export-ClassLink -InputObject $NewLink -Path $Path
         #Write-Verbose "Stored Class Cache data for: $($sourcedId -join ",")"
     }
 }
