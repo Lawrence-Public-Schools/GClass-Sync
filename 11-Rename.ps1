@@ -30,13 +30,14 @@ Function Rename_students()
         Switch-PSGSuiteConfig -ConfigName STUDENTS
     }
 
-    $GEMs = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property role -EQ ([OR_RoleType]::student) | Select-Object -ExpandProperty email | Get-_GSClassroomUserProfile -CacheOnly $true -StoreBad $false
+    $AllUsers = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property role -EQ ([OR_RoleType]::student)
+    $GEMs = $AllUsers | Select-Object -ExpandProperty email | Get-_GSClassroomUserProfile -CacheOnly $true -StoreBad $false
     $r = @()
     $r += Read-OROrgs -FolderPath $WorkFolder | ForEach-Object {
         Write-Host -Object "Updating student's names"
         }, {
         $Org = $_
-        $users_O = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true -Org $Org | Where-Object -Property role -EQ ([OR_RoleType]::student)
+        $users_O = $AllUsers | Where-Object -Property orgSourcedIds -In $Org.sourcedId
         If ($users_O.Count -eq 0)
         {
             Write-Host -Object "No students for: $($Org.name)"
