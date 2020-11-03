@@ -30,6 +30,7 @@ Function Rename_students()
         Switch-PSGSuiteConfig -ConfigName STUDENTS
     }
 
+    $GEMs = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property role -EQ ([OR_RoleType]::student) | Select-Object -ExpandProperty email | Get-_GSClassroomUserProfile -CacheOnly $true -StoreBad $false
     $r = @()
     $r += Read-OROrgs -FolderPath $WorkFolder | ForEach-Object {
         Write-Host -Object "Updating student's names"
@@ -48,7 +49,7 @@ Function Rename_students()
                 $OGN = $_.givenName
                 $OFN = $_.familyName
                 $GEM = $_.email
-                $GCP = $GEM | Get-_GSClassroomUserProfile -CacheOnly $true -StoreBad $false
+                $GCP = $GEMs | Where-Object -Property EmailAddress -EQ $GEM | Select-Object -First 1
                 $GGN = $null
                 $GFN = $null
                 $GEA = $null
