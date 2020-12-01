@@ -1092,6 +1092,13 @@ Function New-_GSCourse
                     Start-Sleep -Seconds 1
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
+                {
+                    Write-Warning "Course $($Id) could not be created, it already exists"
+                    Write-Warning $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Get-_GSCourse -Id $Id -BypassCache -Verbose
+                }
                 Write-Warning $HttpStatusCode
 
                 Throw $Exc.Exception.InnerException
