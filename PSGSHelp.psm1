@@ -1097,7 +1097,7 @@ Function New-_GSCourse
                     Write-Warning "Course $($Id) could not be created, it already exists"
                     Write-Warning $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return Get-_GSCourse -Id $Id -BypassCache -Verbose
+                    Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
                 }
                 Write-Warning $HttpStatusCode
 
