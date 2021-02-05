@@ -1274,7 +1274,7 @@ Function Add-_GSCourseTeacher
         $r = @()
         Try
         {
-            $r += Add-GSCourseParticipant -CourseId $CourseId -Teacher $Teacher -Confirm:$false -ErrorAction Stop
+            $r += Add-GSCourseParticipant -CourseId $CourseId -Teacher $Teacher -ErrorAction Stop
         }
         Catch [System.Management.Automation.MethodInvocationException]
         {
