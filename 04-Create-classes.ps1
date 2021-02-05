@@ -192,7 +192,7 @@ Function make_missing_classes
             $users_M += $users_C | Where-Object -Property email -NE $Teacher
             ForEach ($User in $users_M)
             {
-                Add-GSCourseParticipant -CourseId $ClassId -Teacher $User.email | Out-Null
+                Add-_GSCourseTeacher -CourseId $ClassId -Teacher $User.email | Out-Null
             }
         }
         Return $Class.sourcedId

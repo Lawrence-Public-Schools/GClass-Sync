@@ -1254,3 +1254,81 @@ Function Remove-_GSCourseParticipant
         }
     }
 }
+
+Function Add-_GSCourseTeacher
+{
+    Param
+    (
+        [parameter(Mandatory = $true,Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $CourseId,
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Alias('PrimaryEmail','Email','Mail', 'Id')]
+        [String]
+        $Teacher
+    )
+    PROCESS
+    {
+        $r = @()
+        Try
+        {
+            $r += Add-GSCourseParticipant -CourseId $CourseId -Teacher $Teacher -Confirm:$false -ErrorAction Stop
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            #Write-Host $Exc.Exception
+            If ($Exc.Exception.InnerException -eq $null)
+            {
+                Throw $Exc.Exception
+            }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
+
+                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound))
+                {
+                    Write-Verbose "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Return
+                }
+                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::Forbidden))
+                {
+                    Write-Warning "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
+                {
+                    Write-Warning "Google Classroom Service was unavailable"
+                    Start-Sleep -Seconds 5
+                    Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
+                {
+                    Write-Warning "Google Classroom Service was unavailable"
+                    Start-Sleep -Seconds 5
+                    Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
+                {
+                    Write-Warning "Google Classroom Service was disconnected"
+                    Write-Warning $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
+                {
+                    Write-Verbose "This Teacher: $($Teacher) is already in Course: $($CourseId)"
+                    Return
+                }
+                Write-Warning $HttpStatusCode
+
+                Throw $Exc.Exception.InnerException
+             }
+        }
+    }
+}
