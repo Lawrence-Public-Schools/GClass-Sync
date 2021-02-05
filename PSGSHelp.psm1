@@ -1178,7 +1178,7 @@ function Remove-_GSCourseInvitation
     }
 }
 
-Function Remove-_GSCourseParticipant
+Function Remove-_GSCourseStudent
 {
     Param
     (
@@ -1232,20 +1232,20 @@ Function Remove-_GSCourseParticipant
                 {
                     Write-Warning "Google Classroom Service was unavailable"
                     Start-Sleep -Seconds 5
-                    Return Remove-_GSCourseParticipant -CourseId $CourseId -Student $Student -User $User -Verbose
+                    Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
                     Write-Warning "Google Classroom Service was unavailable"
                     Start-Sleep -Seconds 5
-                    Return Remove-_GSCourseParticipant -CourseId $CourseId -Student $Student -User $User -Verbose
+                    Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
                     Write-Warning "Google Classroom Service was disconnected"
                     Write-Warning $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return Remove-_GSCourseParticipant -CourseId $CourseId -Student $Student -User $User -Verbose
+                    Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
 

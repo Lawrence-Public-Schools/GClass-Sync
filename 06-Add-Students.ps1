@@ -310,7 +310,7 @@ Function invite_class_student()
         }
         If ($DS.Count -gt 0)
         {
-            $DS | Remove-_GSCourseParticipant -CourseId $ClassId -User $Teacher -Verbose | Out-Null
+            $DS | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher -Verbose | Out-Null
         }
 
         $r = @()
