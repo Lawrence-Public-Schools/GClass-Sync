@@ -308,7 +308,12 @@ Function invite_class_student()
         {
             $DI | Remove-_GSCourseInvitation -User $Teacher -Verbose | Out-Null
         }
-        If ($DS.Count -gt 0)
+        If ($users_S_.Count -eq 0)
+        {
+            Write-Warning "Found Google Classroom that should be ARCHIVED: $($ClassID)"
+            Update-GSCourse -Id $ClassId -CourseState ARCHIVED -User $Teacher -Verbose | Out-Null
+        }
+        ElseIf ($DS.Count -gt 0)
         {
             $DS | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher -Verbose | Out-Null
         }
