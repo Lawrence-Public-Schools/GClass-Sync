@@ -349,7 +349,7 @@ Function update_per_class()
                 If ($Co.email -inotin $CoTeachers_emails)
                 {
                     #Write-Warning "Adding Teacher $($Co.email) to $($ClassId)"
-                    Add-GSCourseParticipant -CourseId $ClassId -Teacher $Co.email -Verbose | Out-Null
+                    Add-_GSCourseTeacher -CourseId $ClassId -Teacher $Co.email -Verbose | Out-Null
                 }
             }
         }
@@ -360,7 +360,7 @@ Function update_per_class()
                 #Write-Warning "Can not find a teacher to use for $($ClassId), Old Owner is $($OldOwner)"
                 If ($FakerIn -eq $false)
                 {
-                    Add-GSCourseParticipant -CourseId $ClassId -Teacher $FakeTeacher -Verbose | Out-Null
+                    Add-_GSCourseTeacher -CourseId $ClassId -Teacher $FakeTeacher -Verbose | Out-Null
                     $FakerIn = $true
                 }
                 $Teacher = $FakeTeacher
