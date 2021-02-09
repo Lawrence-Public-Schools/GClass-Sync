@@ -103,7 +103,7 @@ Function update_per_class()
                         Write-Verbose "Updating Empty $($ClassId) Of Faker"
                         $bState = $true
                     }
-                    ElseIf ($false)
+                    Else
                     {
                         $Course = Update-GSCourse -Id $ClassId -CourseState ARCHIVED
                         Write-Verbose "Updating Empty $($ClassId) Of Real"
