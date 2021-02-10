@@ -982,7 +982,7 @@ Function Confirm-_GSCourseInvitation
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
                     Write-Warning "Not Found on processing Google Classroom Invitation for user $($User): $(ConvertTo-Json $I -Depth 1)"
-                    Return $i
+                    Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {

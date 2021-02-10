@@ -73,6 +73,10 @@ Function eat_invitation
             {
                 Write-Host -Object "Confirming $($g.Count) Invite(s) for $($User)"
                 $r = $g | Confirm-_GSCourseInvitation -User $User
+                If ($r.Count -eq 0)
+                {
+                    $retry -= 2
+                }
                 $retry += 1
             }
             Else
