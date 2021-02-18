@@ -1291,6 +1291,11 @@ Function Add-_GSCourseTeacher
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
+                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::BadRequest))
+                {
+                    Write-Warning "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Return
+                }
                 If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound))
                 {
                     Write-Verbose "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
