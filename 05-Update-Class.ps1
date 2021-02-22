@@ -355,7 +355,7 @@ Function update_per_class()
         }
         If ($null -eq $Teacher -and $Course.CourseState -notin ("ARCHIVED","PROVISIONED"))
         {
-            If ($OldOwner -ne $FakeTeacher)
+            If ($OldOwner -ne $FakeTeacher -and $false)
             {
                 #Write-Warning "Can not find a teacher to use for $($ClassId), Old Owner is $($OldOwner)"
                 If ($FakerIn -eq $false)
@@ -412,7 +412,7 @@ Function update_per_class()
             Else
             {
                 Write-Warning "Changing Ownership from $($OldOwner) to $($Teacher) for $($ClassId) In $($Course.CourseState)"
-                If ($Course.CourseState -in ("ARCHIVED", "DECLINED"))
+                If ($Course.CourseState -in ("DECLINED"))
                 {
                     $Course = Update-GSCourse -Id $ClassId -CourseState PROVISIONED
                 }
