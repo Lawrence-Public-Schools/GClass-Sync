@@ -407,7 +407,7 @@ Function Import-ORacademicSession
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORacademicSession
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORacademicSession
     }
 }
 
@@ -574,7 +574,7 @@ Function Import-ORorg
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORorg
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORorg
     }
 }
 
@@ -635,7 +635,7 @@ Function Read-OROrgs
         }
         If ($LoadXML)
         {
-            Import-Clixml -Path $FilePath
+            Import-Clixml -Path $FilePath -ErrorAction Stop
         }
         Else
         {
@@ -767,7 +767,7 @@ Function Import-ORcourse
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORcourse
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORcourse
     }
 }
 
@@ -940,7 +940,7 @@ Function Import-ORenrollment
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORenrollment
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORenrollment
     }
 }
 
@@ -1016,7 +1016,7 @@ Function Read-ORenrollments
         }
         If ($LoadXML)
         {
-            Import-Clixml -Path $FilePath
+            Import-Clixml -Path $FilePath -ErrorAction Stop
         }
         Else
         {
@@ -1168,7 +1168,7 @@ Function Import-ORclass
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORclass
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORclass
     }
 }
 
@@ -1244,7 +1244,7 @@ Function Read-ORclasses
         }
         If ($LoadXML)
         {
-            Import-Clixml -Path $FilePath
+            Import-Clixml -Path $FilePath -ErrorAction Stop
         }
         Else
         {
@@ -1411,7 +1411,7 @@ Function Import-ORuser
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding | Convert-ORuser
+        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORuser
     }
 }
 
@@ -1486,7 +1486,7 @@ Function Read-ORUsers
         }
         If ($LoadXML -eq $true)
         {
-            Import-Clixml -Path $FilePath
+            Import-Clixml -Path $FilePath -ErrorAction Stop
         }
         Else
         {
@@ -2007,12 +2007,12 @@ Function Split-ORClasses
         If ($XMLInput -eq $true)
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "classes.xml"
-            $raw = Import-Clixml -Path $InputFP
+            $raw = Import-Clixml -Path $InputFP -ErrorAction Stop
         }
         Else
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "classes.csv"
-            $raw = Import-Csv -Path $InputFP -Encoding UTF8
+            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
         }
     }
     PROCESS
@@ -2025,7 +2025,7 @@ Function Split-ORClasses
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "classes_$($sourcedId).xml"
             If ($out.Count -gt 0)
             {
-                $out | Convert-ORclass | Export-Clixml -Path $OutputFP -Depth 1 -Encoding UTF8 
+                $out | Convert-ORclass | Export-Clixml -Path $OutputFP -Depth 1 -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
@@ -2037,7 +2037,7 @@ Function Split-ORClasses
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "classes_$($sourcedId).csv"
             If ($out.Count -gt 0)
             {
-                $out | Export-Csv -Path $OutputFP -Encoding UTF8
+                $out | Export-Csv -Path $OutputFP -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
@@ -2068,7 +2068,7 @@ Function Split-ORCourses
         $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "courses.csv"
         If (Test-Path -Path $InputFP -PathType Leaf)
         {
-            $raw = Import-Csv -Path $InputFP -Encoding UTF8
+            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
         }
         Else
         {
@@ -2085,7 +2085,7 @@ Function Split-ORCourses
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "courses_$($sourcedId).xml"
             If ($out.Count -gt 0)
             {
-                $out | Convert-ORcourse | Export-Clixml -Path $OutputFP -Depth 1 -Encoding UTF8
+                $out | Convert-ORcourse | Export-Clixml -Path $OutputFP -Depth 1 -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
@@ -2097,7 +2097,7 @@ Function Split-ORCourses
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "courses_$($sourcedId).csv"
             If ($out.Count -gt 0)
             {
-                $out | Export-Csv -Path $OutputFP -Encoding UTF8
+                $out | Export-Csv -Path $OutputFP -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
@@ -2128,12 +2128,12 @@ Function Split-OREnrollments
         If ($XMLInput -eq $true)
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "enrollments.xml"
-            $raw = Import-Clixml -Path $InputFP
+            $raw = Import-Clixml -Path $InputFP -ErrorAction Stop
         }
         Else
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "enrollments.csv"
-            $raw = Import-Csv -Path $InputFP -Encoding UTF8
+            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
         }
     }
     PROCESS
@@ -2162,11 +2162,11 @@ Function Split-OREnrollments
             {
                 If ($XMLInput -eq $true)
                 {
-                    $out | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8
+                    $out | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8 -ErrorAction Stop
                 }
                 else
                 {
-                    $out | Convert-ORenrollment | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8
+                    $out | Convert-ORenrollment | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8 -ErrorAction Stop
                 }
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
@@ -2179,7 +2179,7 @@ Function Split-OREnrollments
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "enrollments_$($sourcedId).csv"
             If ($out.Count -gt 0)
             {
-                $out | Export-Csv -Path $OutputFP -Encoding UTF8
+                $out | Export-Csv -Path $OutputFP -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
@@ -2210,12 +2210,12 @@ Function Split-ORUsers
         If ($XMLInput -eq $true)
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "users.xml"
-            $raw = Import-Clixml -Path $InputFP
+            $raw = Import-Clixml -Path $InputFP -ErrorAction Stop
         }
         Else
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "users.csv"
-            $raw = Import-Csv -Path $InputFP -Encoding UTF8
+            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
         }
     }
     PROCESS
@@ -2251,11 +2251,11 @@ Function Split-ORUsers
             {
                 If ($XMLInput -eq $true)
                 {
-                    $out | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8
+                    $out | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8 -ErrorAction Stop
                 }
                 else
                 {
-                    $out | Convert-ORenrollment | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8
+                    $out | Convert-ORenrollment | Export-Clixml -Path $OutputFP -Depth 2 -Encoding UTF8 -ErrorAction Stop
                 }
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
@@ -2268,7 +2268,7 @@ Function Split-ORUsers
             $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "users_$($sourcedId).csv"
             If ($out.Count -gt 0)
             {
-                $out | Export-Csv -Path $OutputFP -Encoding UTF8
+                $out | Export-Csv -Path $OutputFP -Encoding UTF8 -ErrorAction Stop
             }
             ElseIf ((Test-Path -Path $OutputFP -PathType Leaf))
             {
