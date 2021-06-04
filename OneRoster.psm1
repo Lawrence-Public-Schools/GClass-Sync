@@ -1269,7 +1269,7 @@ class OR_user
     [String[]]$orgSourcedIds
     [OR_RoleType]$role
     [String]$username
-    [String]$userIds
+    [String[]]$userIds
     [String]$givenName
     [String]$familyName
     [String]$MiddleName
