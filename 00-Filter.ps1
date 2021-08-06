@@ -2,7 +2,8 @@
 
 Param(
     [String]$InputFolder = $null,
-    [String]$OutputFolder = ".\gclass-OneRoster\"
+    [String]$OutputFolder = ".\gclass-OneRoster\",
+    [String]$OrgFilter = ""
 )
 
 Get-Module -Name OneRoster| Remove-Module; Import-Module .\OneRoster.psm1
@@ -21,11 +22,21 @@ Function main_split_by_org
         [Parameter(Mandatory = $false)]
         [String]$InputFolder = ".",
         [Parameter(Mandatory = $false)]
-        [String]$OutputFolder = "."
+        [String]$OutputFolder = ".",
+        [Parameter(Mandatory = $false)]
+        [String]$OrgFilter = ""
     )
     PROCESS
     {
-        $Orgs = Find-OROrgs -FolderPath $InputFolder
+        $Orgs = $null
+        If ($OrgFilter -EQ "")
+        {
+            $Orgs = Find-OROrgs -FolderPath $InputFolder
+        }
+        Else
+        {
+            $Orgs = Find-OROrgs -FolderPath $InputFolder | Where-Object -FilterScript {($_.sourcedId -eq $OrgFilter) -or ($_.parentSourcedId -eq $OrgFilter)}
+        }
         Write-Host -Object "Spliting Courses"
         $Orgs | Split-ORCourses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLOutput $true -ErrorAction Continue
         Write-Host -Object "Spliting Classes"
@@ -115,13 +126,22 @@ Function main_fixup_users
         [Parameter(Mandatory = $false)]
         [String]$InputFolder = ".",
         [Parameter(Mandatory = $false)]
-        [String]$OutputFolder = "."
+        [String]$OutputFolder = ".",
+        [Parameter(Mandatory = $false)]
+        [String]$OrgFilter = ""
     )
     PROCESS
     {
         $Users_O_FP = Join-Path -Path $OutputFolder -ChildPath "users.xml"
         Write-Host -Object "Fixup Users: Loading"
-        Read-ORUsers -FolderPath $InputFolder  | process_fixup_user | Export-Clixml -Path $Users_O_FP -Depth 2 -Encoding UTF8
+        If ($OrgFilter -EQ "")
+        {
+            Read-ORUsers -FolderPath $InputFolder  | process_fixup_user | Export-Clixml -Path $Users_O_FP -Depth 2 -Encoding UTF8
+        }
+        Else
+        {
+            Read-ORUsers -FolderPath $InputFolder | Where-Object -FilterScript {$OrgFilter -In $_.orgSourcedIds} | process_fixup_user | Export-Clixml -Path $Users_O_FP -Depth 2 -Encoding UTF8
+        }
         Write-Host -Object "Fixup Users: Done"
     }
 }
@@ -262,13 +282,22 @@ Function main_fixup_classes
         [Parameter(Mandatory = $false)]
         [String]$InputFolder = ".",
         [Parameter(Mandatory = $false)]
-        [String]$OutputFolder = "."
+        [String]$OutputFolder = ".",
+        [Parameter(Mandatory = $false)]
+        [String]$OrgFilter = ""
     )
     PROCESS
     {
         $classes_O_FP = Join-Path -Path $OutputFolder -ChildPath "classes.xml"
         Write-Host -Object "Fixup classes: Loading"
-        Read-ORclasses -FolderPath $InputFolder| process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+        If ($OrgFilter -EQ "")
+        {
+            Read-ORclasses -FolderPath $InputFolder | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+        }
+        Else
+        {
+            Read-ORclasses -FolderPath $InputFolder | Where-Object -Property schoolSourcedId -EQ -Value $OrgFilter | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+        }
         Write-Host -Object "Fixup classes: Done"
     }
 }
@@ -297,7 +326,9 @@ Function main
         [Parameter(Mandatory = $true)]
         [String]$InputFolder,
         [Parameter(Mandatory = $true)]
-        [String]$OutputFolder
+        [String]$OutputFolder,
+        [Parameter(Mandatory = $true)]
+        [String]$OrgFilter
     )
     PROCESS
     {
@@ -306,10 +337,17 @@ Function main
             New-Item -Path $OutputFolder -ItemType Directory -Force -Verbose | Out-Null
         }
         main_copy_csv -InputFolder $InputFolder -OutputFolder $OutputFolder
-        main_fixup_users -InputFolder $InputFolder -OutputFolder $OutputFolder
+        If ($OrgFilter -ne "")
+        {
+            Write-Host -Object "Filtering ORGS file with filter: $($OrgFilter)"
+            $FilteredOrgs = Read-OROrgs -FolderPath $InputFolder | Where-Object -FilterScript {($_.parentSourcedId -eq $OrgFilter) -or ($_.sourcedId -eq $OrgFilter)}
+            Write-Host -Object "Filtered ORGS file down to $($FilteredOrgs.Count)"
+            $FilteredOrgs | Out-ORorg -FilePath (Join-Path -Path $OutputFolder -ChildPath "orgs.csv")
+        }
+        main_fixup_users -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
         main_fixup_enrollments -InputFolder $InputFolder -OutputFolder $OutputFolder
-        main_fixup_classes -InputFolder $InputFolder -OutputFolder $OutputFolder
-        main_split_by_org -InputFolder $OutputFolder -OutputFolder $OutputFolder
+        main_fixup_classes -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
+        main_split_by_org -InputFolder $OutputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
     }
 }
 
@@ -370,4 +408,4 @@ Function filter_empty_class #TODO
     }
 }
 
-main -InputFolder $InputFolder -OutputFolder $OutputFolder
+main -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter

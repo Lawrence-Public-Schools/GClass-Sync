@@ -1995,7 +1995,7 @@ Function Split-ORClasses
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [String]$DestFolderPath = ".",
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [OR_course[]]$org_E = $null,
+        [OR_org[]]$org_E = $null,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Bool]$XMLInput = $false,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
@@ -2057,7 +2057,7 @@ Function Split-ORCourses
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [String]$DestFolderPath = ".",
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        [OR_course[]]$org_E = $null,
+        [OR_org[]]$org_E = $null,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Bool]$XMLInput = $false,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
@@ -2117,7 +2117,7 @@ Function Split-OREnrollments
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [String]$DestFolderPath = ".",
         [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
-        [OR_course[]]$org_E = $null,
+        [OR_org[]]$org_E = $null,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Bool]$XMLInput = $false,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
@@ -2199,7 +2199,7 @@ Function Split-ORUsers
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [String]$DestFolderPath = ".",
         [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
-        [OR_course[]]$org_E = $null,
+        [OR_org[]]$org_E = $null,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Bool]$XMLInput = $false,
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
@@ -2230,11 +2230,11 @@ Function Split-ORUsers
             $sourcedId = $org_E.sourcedId
             If ($XMLInput -eq $true)
             {
-                $out += $raw | Where-Object -Property orgSourcedIds -CIn -Value $sourcedId
+                $out += $raw | Where-Object -FilterScript {$sourcedId -cin $_.orgSourcedIds} #-Property orgSourcedIds -CIn -Value $sourcedId
             }
             Else
             {
-                $out += $raw | Where-Object -Property orgSourcedIds -Contains -Value $sourcedId
+                $out += $raw | Where-Object -FilterScript {$sourcedId -cin ($_.orgSourcedIds -split ",")} #-Property orgSourcedIds -Contains -Value $sourcedId
             }
         }
         If ($XMLOutput -eq $true)
@@ -2562,7 +2562,7 @@ Function Limit-ORUserByschoolSourcedId #UNUSED
     PROCESS
     {
         #Write-Warning "Limit-ORUserByschoolSourcedId"
-        $user_E | Where-Object -Property sourcedId -CIn -Value $sourcedId
+        $user_E | Where-Object -FilterScript {$sourcedId -cin $_.sourcedId} #-Property sourcedId -CIn -Value $sourcedId
     }
 }
 
@@ -2583,6 +2583,6 @@ Function Limit-ORUserByorgSourcedIds #USED
     PROCESS
     {
         Write-Warning "Limit-ORUserByorgSourcedIds"
-        $user_E | Where-Object -Property orgSourcedIds -CIn -Value $orgSourcedIds
+        $user_E | Where-Object -FilterScript {$orgSourcedIds -cin $_.orgSourcedIds} #-Property orgSourcedIds -CIn -Value $orgSourcedIds
     }
 }
