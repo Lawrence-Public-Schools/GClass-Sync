@@ -1073,6 +1073,12 @@ Function New-_GSCourse
                     Write-Warning $Exc.Exception.InnerException
                     Return
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
+                {
+                    Write-Warning "Google User $($OwnerId) can not make a Google Classroom"
+                    Write-Warning $Exc.Exception.InnerException
+                    Return
+                }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
                     Write-Warning "Google Classroom Service was unavailable"
