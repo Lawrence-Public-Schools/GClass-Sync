@@ -24,6 +24,7 @@ Function main_split_by_org
         [Parameter(Mandatory = $false)]
         [String]$OutputFolder = ".",
         [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [String]$OrgFilter = ""
     )
     PROCESS
@@ -128,6 +129,7 @@ Function main_fixup_users
         [Parameter(Mandatory = $false)]
         [String]$OutputFolder = ".",
         [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [String]$OrgFilter = ""
     )
     PROCESS
@@ -284,6 +286,7 @@ Function main_fixup_classes
         [Parameter(Mandatory = $false)]
         [String]$OutputFolder = ".",
         [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
         [String]$OrgFilter = ""
     )
     PROCESS
@@ -328,7 +331,8 @@ Function main
         [Parameter(Mandatory = $true)]
         [String]$OutputFolder,
         [Parameter(Mandatory = $true)]
-        [String]$OrgFilter
+        [AllowEmptyString()]
+        [String]$OrgFilter = ""
     )
     PROCESS
     {
