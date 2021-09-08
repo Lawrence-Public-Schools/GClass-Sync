@@ -857,9 +857,11 @@ Function New-_GSCourseInvitation
                 {
                     #Return "429"
                     $RetryS = 300
-                    Write-Verbose -Message "Waiting for $($RetryS) seconds"
-                    Start-Sleep -Seconds $RetryS
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
+                    W#rite-Verbose -Message "Waiting for $($RetryS) seconds"
+                    #Start-Sleep -Seconds $RetryS
+                    Write-Warning "Failed to to add $($UserId) As $($Role) As $($User), too many requests"
+                    Return
+                    #Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
