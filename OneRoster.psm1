@@ -395,19 +395,28 @@ Function Import-ORacademicSession
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORacademicSession
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORacademicSession
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
@@ -562,19 +571,28 @@ Function Import-ORorg
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORorg
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORorg
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
@@ -755,19 +773,28 @@ Function Import-ORcourse
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORcourse
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORcourse
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
@@ -928,19 +955,28 @@ Function Import-ORenrollment
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORenrollment
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORenrollment
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
@@ -1156,19 +1192,28 @@ Function Import-ORclass
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORclass
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORclass
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
@@ -1399,19 +1444,28 @@ Function Import-ORuser
     )
     BEGIN
     {
-        $l = $Null
+        $private:l = $Null
         If ((Test-Path -Path $Path -PathType Leaf))
         {
-            $l = Get-ChildItem -Path $Path
+            $private:l = Get-ChildItem -Path $Path
         }
+        $private:OR_Path_TMP = New-TemporaryFile
     }
     PROCESS
     {
-        If ($l -eq $null)
+        If ($null -ceq $private:l)
         {
             Return
         }
-        Return Import-Csv -Path $Path -Encoding $Encoding -ErrorAction Stop | Convert-ORuser
+        Return Import-Csv -LiteralPath (Copy-Item -Path $Path -Destination $private:OR_Path_TMP -PassThru) -Encoding $Encoding -ErrorAction Stop | Convert-ORuser
+    }
+    END
+    {
+        If ($null -ceq $private:l)
+        {
+            Return
+        }
+        $private:OR_Path_TMP | Remove-Item
     }
 }
 
