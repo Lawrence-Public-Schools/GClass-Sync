@@ -2057,7 +2057,6 @@ Function Split-ORClasses
     )
     BEGIN
     {
-
         If ($XMLInput -eq $true)
         {
             $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "classes.xml"
@@ -2119,14 +2118,15 @@ Function Split-ORCourses
     )
     BEGIN
     {
-        $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "courses.csv"
-        If (Test-Path -Path $InputFP -PathType Leaf)
+        If ($XMLInput -eq $true)
         {
-            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
+            $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "courses.xml"
+            $raw = Import-Clixml -Path $InputFP -ErrorAction Stop
         }
         Else
         {
-            $raw = @()
+            $InputFP = Join-Path -Path $SourceFolderPath -ChildPath "courses.csv"
+            $raw = Import-Csv -Path $InputFP -Encoding UTF8 -ErrorAction Stop
         }
     }
     PROCESS
