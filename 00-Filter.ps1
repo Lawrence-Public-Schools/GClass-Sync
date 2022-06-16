@@ -270,7 +270,7 @@ Function main_fixup_enrollments
         $enrollments_O_FP = Join-Path -Path $OutputFolder -ChildPath "enrollments.xml"
         Write-Host -Object "Fixup enrollments: Loading"
         $BeginLayway = [TimeSpan]::FromDays(21)
-        $EndLayway = [TimeSpan]::FromDays(-35)
+        $EndLayway = [TimeSpan]::FromDays(-7)
         Read-ORenrollments -FolderPath $InputFolder | Limit-OREnrollmentByDate -BeginLayway $BeginLayway -EndLayway $EndLayway | process_fixup_enrollment -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $enrollments_O_FP
         Write-Host -Object "Fixup enrollments: Done"
     }
