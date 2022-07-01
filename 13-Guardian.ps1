@@ -14,7 +14,7 @@ $TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Guardian.log").Replace(" ", "-")).
 Start-Transcript -path $TLOG
 
 #$ErrorActionPreference = "Stop"
-$ErrorActionPreference = "Inquire"
+#$ErrorActionPreference = "Inquire"
 
 Function Invite_guardian()
 {
@@ -30,14 +30,16 @@ Function Invite_guardian()
         Switch-PSGSuiteConfig -ConfigName STUDENTS
     }
 
-    #$SGUsers = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property enabledUser -EQ -Value $true | Where-Object -Property role -IN -Value @(([OR_RoleType]::student),[OR_RoleType]::guardian)
+    $SGUsers = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | Where-Object -Property enabledUser -EQ -Value $true | Where-Object -Property role -IN -Value @(([OR_RoleType]::student),[OR_RoleType]::guardian)
     $SUsers = $SGUsers | Where-Object -Property role -EQ -Value ([OR_RoleType]::student)
     $GUsers = $SGUsers | Where-Object -Property role -EQ -Value ([OR_RoleType]::guardian)
 
     $SUserswG = $SUsers | Where-Object -FilterScript {($_.agentSourcedIds -join ",") -cne ""}
-    $GUsersHT = $GUsers | Group-Object -AsHashTable -Property sourcedId
+    Write-Host -Object ("Find {0} students with guardians" -f $SUserswG.Count)
+    $GUsersHT = $GUsers | Where-Object -Property email -CNE -Value "" | Group-Object -AsHashTable -Property sourcedId
 
-    $SUserswG | ForEach-Object -Begin {
+    $invs = @()
+    $invs += $SUserswG | ForEach-Object -Begin {
     } -Process {
         $Student = $_
         $StudentGuardians = @()
@@ -45,24 +47,37 @@ Function Invite_guardian()
         $Student.agentSourcedIds | ForEach-Object -Begin {
         } -Process {
             $GuardianId = $_
-            $Guardian = $GUsersHT[$GuardianId]
+            $Guardian = $null
             $StudentGuardian = $null
-            $StudentGuardian = $StudentGuardians | Where-Object -Property InvitedEmailAddress -EQ -Value $Guardian.email
-            If ($StudentGuardian -cne $null)
+            If ($GUsersHT.ContainsKey($GuardianId))
             {
-                #Write-Host -Object ("{0} already have {1}" -f $Student.email,$Guardian.email)
+                $Guardian = $GUsersHT[$GuardianId]
+                $StudentGuardian = $StudentGuardians | Where-Object -Property InvitedEmailAddress -EQ -Value $Guardian.email
+            }
+            If ($Guardian -ceq $null)
+            {
+                Write-Verbose -Message ("Skipping {0} for blan email" -f $GuardianId)
+            }
+            ElseIf ($StudentGuardian -cne $null)
+            {
+                #Write-Host -Object ("{0} already have {1}" -f $Student.Iemail,$Guardian.email)
+            }
+            ElseIf ([String]::IsNullOrWhiteSpace($Guardian.email))
+            {
+                Write-Verbose -Message ("Skipping {0} for empty email" -f $GuardianId)
             }
             Else
             {
-                New-GSStudentGuardianInvitation -StudentId $Student.email -GuardianEmail $Guardian.email | Out-Null
+                New-GSStudentGuardianInvitation -StudentId $Student.email -GuardianEmail $Guardian.email -User "lps.rostersync@lawrence.k12.ma.us"
                 Write-Host -Object ("{0} invited {1}" -f $Student.email,$Guardian.email)
             }
         } -End {
-        } #-Verbose
+        } -Verbose
     } -End {
     } #-Verbose
+    Write-Host -Object ("Sent out {0} Guardian Invitations" -f $invs.Count)
 
-    return $r
+    return $invs
 }
 
 $r = Invite_guardian -WorkFolder $WorkFolder -Verbose
