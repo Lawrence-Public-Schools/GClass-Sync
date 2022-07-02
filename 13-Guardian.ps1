@@ -45,6 +45,7 @@ Function Invite_guardian()
         $StudentGuardians = @()
         $StudentGuardians += Get-GSStudentGuardian -StudentId $Student.email
         $Student.agentSourcedIds | ForEach-Object -Begin {
+            $InvSented = @()
         } -Process {
             $GuardianId = $_
             $Guardian = $null
@@ -66,9 +67,14 @@ Function Invite_guardian()
             {
                 Write-Verbose -Message ("Skipping {0} for empty email" -f $GuardianId)
             }
+            ElseIf ($Guardian.email -in $InvSented)
+            {
+                Write-Verbose -Message ("Already sented {0} an invite" -f $Guardian.email)
+            }
             Else
             {
-                New-GSStudentGuardianInvitation -StudentId $Student.email -GuardianEmail $Guardian.email -User "lps.rostersync@lawrence.k12.ma.us"
+                $InvSented += $Guardian.email
+                New-GSStudentGuardianInvitation -StudentId $Student.email -GuardianEmail $Guardian.email
                 Write-Host -Object ("{0} invited {1}" -f $Student.email,$Guardian.email)
             }
         } -End {
