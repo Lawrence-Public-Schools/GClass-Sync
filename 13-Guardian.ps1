@@ -43,7 +43,9 @@ Function Invite_guardian()
     } -Process {
         $Student = $_
         $StudentGuardians = @()
+        $SStudentGuardianInvitations = @()
         $StudentGuardians += Get-GSStudentGuardian -StudentId $Student.email
+        $StudentGuardianInvitations += Get-GSStudentGuardianInvitation -StudentId $Student.email
         $Student.agentSourcedIds | ForEach-Object -Begin {
             $InvSented = @()
         } -Process {
@@ -54,6 +56,7 @@ Function Invite_guardian()
             {
                 $Guardian = $GUsersHT[$GuardianId]
                 $StudentGuardian = $StudentGuardians | Where-Object -Property InvitedEmailAddress -EQ -Value $Guardian.email
+                $StudentGuardianInvitation = $StudentGuardianInvitations | Where-Object -Property InvitedEmailAddress -EQ -Value $Guardian.email
             }
             If ($Guardian -ceq $null)
             {
@@ -62,6 +65,10 @@ Function Invite_guardian()
             ElseIf ($StudentGuardian -cne $null)
             {
                 #Write-Host -Object ("{0} already have {1}" -f $Student.Iemail,$Guardian.email)
+            }
+            ElseIf ($StudentGuardianInvitation -cne $null)
+            {
+                #Write-Host -Object ("{0} already invite {1}" -f $Student.Iemail,$Guardian.email)
             }
             ElseIf ([String]::IsNullOrWhiteSpace($Guardian.email))
             {
