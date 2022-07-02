@@ -60,7 +60,7 @@ Function Invite_guardian()
             }
             If ($Guardian -ceq $null)
             {
-                Write-Verbose -Message ("Skipping {0} for blan email" -f $GuardianId)
+                #Write-Verbose -Message ("Skipping {0} for blank email" -f $GuardianId)
             }
             ElseIf ($StudentGuardian -cne $null)
             {
