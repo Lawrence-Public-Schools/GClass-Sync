@@ -785,8 +785,8 @@ Function Get-_GSCourseParticipant
                 If ($HttpStatusCode -eq 429)
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 30000
-                    Write-Verbose ("Waiting for {0} seconds" -f $RetryMS/100)
+                    $RetryMS = 300000
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
