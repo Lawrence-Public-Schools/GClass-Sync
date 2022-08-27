@@ -43,7 +43,7 @@ Function Invite_guardian()
     } -Process {
         $Student = $_
         $StudentGuardians = @()
-        $SStudentGuardianInvitations = @()
+        $StudentGuardianInvitations = @()
         $StudentGuardians += Get-GSStudentGuardian -StudentId $Student.email
         $StudentGuardianInvitations += Get-GSStudentGuardianInvitation -StudentId $Student.email
         $Student.agentSourcedIds | ForEach-Object -Begin {
