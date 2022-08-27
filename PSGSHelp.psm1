@@ -929,19 +929,60 @@ Function Get-_GSCourseInvitation
     )
     PROCESS
     {
-        $i = @()
-        $i += Get-GSCourseInvitation -CourseId $CourseId
-        If ($i.Count -eq 0)
-        {
-            Return
-        }
         $r = @()
-        $r += $i | Where-Object -Property Role -In -Value $Role
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
+        try
+        {
+            $r += Get-GSCourseInvitation -CourseId $CourseId
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            If ($Exc.Exception.InnerException -eq $null)
+            {
+                Throw $Exc.Exception
+            }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
+
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
+                {
+                    #Write-Warning "Google Classroom $($CourseId) had changed state"
+                    Write-Warning "Denied to to get $($CourseId) Invitations"
+                    Return
+                }
+                If ($HttpStatusCode -eq 429)
+                {
+                    Write-Warning "Google Classroom Service is limited, holding off"
+                    $RetryMS = 300000
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Start-Sleep -Milliseconds $RetryMS
+                    Return Get-_GSCourseInvitation -CourseId $CourseId -Role $Role -Verbose
+                }
+                Write-Warning $HttpStatusCode
+                
+                Throw $Exc.Exception.InnerException
+            }
+        }
         If ($r.Count -eq 0)
         {
             Return
         }
-        Return $r
+        $f = @()
+        $f += $r | Where-Object -Property Role -In -Value $Role
+        If ($f.Count -eq 0)
+        {
+            Return
+        }
+        Return $f
     }
 }
 
