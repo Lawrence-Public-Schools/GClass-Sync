@@ -47,6 +47,25 @@ namespace PSGSHelp_FastSearch
 
 Add-Type -ReferencedAssemblies $Assem -TypeDefinition $PSGSHelp_Source -Language CSharp
 
+Function HTTP429-TooManyRequests
+{
+
+    [OutputType('Void')]
+    [CmdletBinding()]
+    Param
+    (
+        [parameter(Mandatory = $false)]
+        [Int]
+        $RetryMS = 300000
+    )
+    PROCESS
+    {
+        #Write-Warning -Message "Google Classroom Service is limited, holding off"
+        Write-Warning -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
+        Start-Sleep -Milliseconds $RetryMS
+    }
+}
+
 Function Clear-_GSClassroomUserProfile
 {
     [OutputType('Void')]
@@ -368,10 +387,7 @@ Function Get-_GSClassroomUserProfile
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -701,10 +717,7 @@ Function Get-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -807,10 +820,7 @@ Function Get-_GSCourseParticipant
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -896,10 +906,7 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -961,10 +968,7 @@ Function Get-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Get-_GSCourseInvitation -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1066,10 +1070,7 @@ Function Confirm-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1172,10 +1173,7 @@ Function New-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1252,10 +1250,7 @@ function Remove-_GSCourseInvitation
             }
             If ($HttpStatusCode -eq 429)
             {
-                Write-Warning "Google Classroom Service is limited, holding off"
-                $RetryMS = 300000
-                Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                Start-Sleep -Milliseconds $RetryMS
+                HTTP429-TooManyRequests
                 Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
             }
             Write-Warning $HttpStatusCode
@@ -1336,10 +1331,7 @@ Function Remove-_GSCourseStudent
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1427,10 +1419,7 @@ Function Add-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Write-Warning "Google Classroom Service is limited, holding off"
-                    $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
-                    Start-Sleep -Milliseconds $RetryMS
+                    HTTP429-TooManyRequests
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 Write-Warning $HttpStatusCode
