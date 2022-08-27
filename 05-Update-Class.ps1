@@ -243,7 +243,7 @@ Function update_per_class()
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
         $Users_C_O = @()
@@ -264,7 +264,7 @@ Function update_per_class()
             }
             If ($Lookup_U.Count -gt 0 -and $null -eq $Teacher)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
         If ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
