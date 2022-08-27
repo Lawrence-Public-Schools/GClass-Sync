@@ -370,7 +370,7 @@ Function Get-_GSClassroomUserProfile
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
@@ -703,7 +703,7 @@ Function Get-_GSCourse
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
@@ -809,7 +809,7 @@ Function Get-_GSCourseParticipant
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
@@ -898,7 +898,7 @@ Function New-_GSCourseInvitation
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
@@ -963,7 +963,7 @@ Function Get-_GSCourseInvitation
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSCourseInvitation -CourseId $CourseId -Role $Role -Verbose
                 }
@@ -1068,7 +1068,7 @@ Function Confirm-_GSCourseInvitation
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
@@ -1174,7 +1174,7 @@ Function New-_GSCourse
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
                 }
@@ -1254,7 +1254,7 @@ function Remove-_GSCourseInvitation
             {
                 Write-Warning "Google Classroom Service is limited, holding off"
                 $RetryMS = 300000
-                Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                 Start-Sleep -Milliseconds $RetryMS
                 Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
             }
@@ -1338,7 +1338,7 @@ Function Remove-_GSCourseStudent
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
@@ -1429,7 +1429,7 @@ Function Add-_GSCourseTeacher
                 {
                     Write-Warning "Google Classroom Service is limited, holding off"
                     $RetryMS = 300000
-                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/100))
+                    Write-Verbose -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
                     Start-Sleep -Milliseconds $RetryMS
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
