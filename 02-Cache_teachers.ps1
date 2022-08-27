@@ -84,7 +84,7 @@ Function Find_teachers()
         Else
         {
             Write-Host -Object "Looking up $($users_O.Count) teachers for: $($Org.name)"
-            $CP = $users_O.email | Get-_GSClassroomUserProfile -StoreBad $true
+            $CP = $users_O.email | Get-_GSClassroomUserProfile -StoreBad $true -SkipCache $true
             Write-Host -Object "Checking for mismatch Google Accounts"
             If ($CP.Count -eq 0)
             {
