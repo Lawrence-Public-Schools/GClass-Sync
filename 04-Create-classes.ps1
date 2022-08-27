@@ -97,7 +97,7 @@ Function make_missing_classes
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email.ToLower() | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExcludeProperty EmailAddress
             }
         }
         $Users_C_O = @()
@@ -118,7 +118,7 @@ Function make_missing_classes
             }
             If ($Lookup_U.Count -gt 0 -and $null -eq $Teacher)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExcludeProperty EmailAddress
             }
         }
         If ($null -eq $Teacher) #Still no primary teacher? look for a plain teacher
@@ -132,7 +132,7 @@ Function make_missing_classes
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExcludeProperty EmailAddress
             }
         }
         If ($null -eq $Teacher) #Still no coteacher? look for a plain aide
@@ -146,7 +146,7 @@ Function make_missing_classes
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExcludeProperty EmailAddress
             }
         }
         
@@ -161,7 +161,7 @@ Function make_missing_classes
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email | Select-Object -First 1
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExcludeProperty EmailAddress
             }
         }
         $r = $null
