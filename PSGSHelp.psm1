@@ -110,7 +110,14 @@ Function Import-_GSClassroomUserProfile
         $r = @()
         If ((Test-Path -Path $Cache_File -PathType Leaf))
         {
-            $r = Import-Clixml -Path $Cache_File
+            try
+            {
+                $r = Import-Clixml -Path $Cache_File -ErrorAction Stop
+            }
+            catch
+            {
+                Write-Warning -Message ("Failed to load: {0}" -f $Cache_File)
+            }
         }
         If ($r.Count -le 1)
         {
@@ -202,7 +209,14 @@ Function Import-_GSClassroomUserProfile_Bad
         $r = @()
         If ((Test-Path -Path $Cache_File -PathType Leaf))
         {
-            $r = Import-Clixml -Path $Cache_File
+            try
+            {
+                $r = Import-Clixml -Path $Cache_File
+            }
+            catch
+            {
+                Write-Warning -Message ("Failed to load: {0}" -f $Cache_File)
+            }
         }
         If ($r.Count -le 1)
         {
@@ -464,7 +478,14 @@ Function Import-_GSCourseAlias
         $Cache_File = Join-Path -Path $Path -ChildPath "Cache_GSCourseAlias_$($Domain).xml"
         If ((Test-Path -Path $Cache_File -PathType Leaf))
         {
-            Import-Clixml -Path $Cache_File
+            try
+            {
+                Import-Clixml -Path $Cache_File
+            }
+            catch
+            {
+                Write-Warning -Message ("Failed to load: {0}" -f $Cache_File)
+            }
         }
         Else
         {
@@ -541,7 +562,14 @@ Function Import-_GSCourse
         $r = @()
         If ((Test-Path -Path $Cache_File -PathType Leaf))
         {
-            $r += Import-Clixml -Path $Cache_File
+            try
+            {
+                $r = Import-Clixml -Path $Cache_File
+            }
+            catch
+            {
+                Write-Warning -Message ("Failed to load: {0}" -f $Cache_File)
+            }
         }
         Return $r
     }
