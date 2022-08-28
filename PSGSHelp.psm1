@@ -1174,7 +1174,7 @@ Function New-_GSCourse
                 If ($HttpStatusCode -eq 429)
                 {
                     HTTP429-TooManyRequests
-                    Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 Write-Warning $HttpStatusCode
 
