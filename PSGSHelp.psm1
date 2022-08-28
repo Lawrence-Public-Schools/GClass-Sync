@@ -377,13 +377,18 @@ Function Get-_GSClassroomUserProfile
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound,[System.Net.HttpStatusCode]::Unauthorized, [System.Net.HttpStatusCode]::Forbidden))
+                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound,[System.Net.HttpStatusCode]::Unauthorized))
                 {
                     If ($UserId -like "*@$($Cache_Domain)")
                     {
                         $Cache_Failed_Changed = $true
                         $Cache_Failed += $UserId
                     }
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
+                {
+                    Write-Warning -Message ("Could not lookup User: {0}" -f $UserId)
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
