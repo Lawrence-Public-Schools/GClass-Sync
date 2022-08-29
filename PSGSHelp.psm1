@@ -337,7 +337,7 @@ Function Get-_GSClassroomUserProfile
             
             If ($r.Count -gt 1)
             {
-                Write-Warning "Found more this one profile for $($UserId): $($r | ConvertTo-Json -Depth 2)"
+                Write-Warning -Message ("Found more this one profile for {0}: {1}" -f $UserId, ($r | ConvertTo-Json -Depth 2))
                 #Return $r[-1]
             }
             ElseIF ($r.Count -eq 1)
@@ -384,23 +384,30 @@ Function Get-_GSClassroomUserProfile
                         $Cache_Failed_Changed = $true
                         $Cache_Failed += $UserId
                     }
+                    Else
+                    {
+                        Write-Warning -Message ("Could not lookup: {0}" -f $UserId)
+                    }
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
                     Write-Warning -Message ("Could not lookup User: {0}" -f $UserId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
@@ -422,7 +429,7 @@ Function Get-_GSClassroomUserProfile
         {
             Return $r
         }
-        Write-Warning "Could not look up Classroom User Profile: $($UserId)"
+        Write-Warning -Message ("Could not look up Classroom User Profile: {0}" -f $UserId)
     }
     END
     {
@@ -725,26 +732,37 @@ Function Get-_GSCourse
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound,[System.Net.HttpStatusCode]::Unauthorized))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
+                    #Write-Warning -Message ("Could not find Course: {0}", $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unauthorized)
+                {
+                    Write-Warning -Message ("Can not access Course: {0}" -f $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
-                    Write-Warning "Google Classroom got an internal server error"
+                    Write-Warning -Message "Google Classroom got an internal server error"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
@@ -834,20 +852,29 @@ Function Get-_GSCourseParticipant
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound,[System.Net.HttpStatusCode]::Unauthorized))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
+                    #Write-Warning -Message ("Could not find any {1} in Course: {0}" -f $CourseId, $Role)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unauthorized)
+                {
+                    Write-Warning -Message ("Can not access any {1} in Course: {0}" -f $CourseId, $Role)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
@@ -914,26 +941,29 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
-                    #Write-Warning "Google Classroom $($CourseId) had changed state"
-                    Write-Warning "Failed to to add $($UserId) As $($Role) As $($User)"
+                    #Write-Warning -Message "Google Classroom $($CourseId) had changed state"
+                    Write-Warning -Message ("Failed to add {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    #Write-Warning "Google Classroom $($CourseId) had changed state"
-                    Write-Warning "Denied to to add $($UserId) As $($Role) As $($User)"
+                    #Write-Warning -Message ("Google Classroom {0} had changed state" -f $CourseId)
+                    Write-Warning -Message ("Denied to add {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
@@ -995,8 +1025,9 @@ Function Get-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    #Write-Warning "Google Classroom $($CourseId) had changed state"
-                    Write-Warning "Denied to to get $($CourseId) Invitations"
+                    #Write-Warning -Message ("Google Classroom {0} had changed state" -f $CourseId)
+                    Write-Warning -Message ("Denied to to get {0} Invitations" -f $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq 429)
@@ -1038,7 +1069,7 @@ Function Confirm-_GSCourseInvitation
     )
     PROCESS
     {
-        #$i = $null
+        $i = @()
         Try
         {
             #$id = Get-GSCourseInvitation -Id $Id -User $User -ErrorAction Stop | Select-Object -ExpandProperty Id
@@ -1049,15 +1080,10 @@ Function Confirm-_GSCourseInvitation
             Write-Host $Exc.Exception
         }
 
-        If ($i -eq $null)
-        {
-            #Return
-        }
-
         Try
         {
             $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
-            Confirm-GSCourseInvitation -Id $Id -User $User -ErrorAction Stop | Out-Null
+            $i += Confirm-GSCourseInvitation -Id $Id -User $User -ErrorAction Stop
         }
         Catch [System.Management.Automation.MethodInvocationException]
         {
@@ -1075,29 +1101,33 @@ Function Confirm-_GSCourseInvitation
 
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
-                    Write-Warning "Not Found on processing Google Classroom Invitation for user $($User): $(ConvertTo-Json $I -Depth 1)"
+                    Write-Warning -Message ("Not Found on processing Google Classroom Invitation for user {0}: {1}" -f $User, (ConvertTo-Json $I -Depth 1))
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    Write-Warning "Forbidden on processing Google Classroom Invitation for user $($User): $(ConvertTo-Json $I -Depth 1)"
-                    Return $i
+                    Write-Warning -Message ("Forbidden on processing Google Classroom Invitation for user {0}: {1})" -f $User, (ConvertTo-Json $I -Depth 1))
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
-                    Write-Warning "Internal Error on processing Google Classroom Invitation for user $($User): $(ConvertTo-Json $I -Depth 1)"
-                    Return $i
+                    Write-Warning -Message ("Internal Error on processing Google Classroom Invitation for user {0}: {1})" -f $User, (ConvertTo-Json $I -Depth 1))
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
@@ -1168,39 +1198,41 @@ Function New-_GSCourse
 
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    Write-Warning "Google User $($OwnerId) can not make a Google Classroom"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message ("Google User {0} can not make a Google Classroom" -f $OwnerId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
-                    Write-Warning "Google User $($OwnerId) can not make a Google Classroom"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message ("Google User {0} can not make a Google Classroom" -f $OwnerId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
-                    Write-Warning "Google Classroom Service had an internal server error, retry?"
+                    Write-Warning -Message "Google Classroom Service had an internal server error, retry?"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
                 {
-                    Write-Warning "Course $($Id) could not be created, it already exists"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message ("Course {0} could not be created, it already exists" -f $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
                 }
@@ -1260,24 +1292,27 @@ function Remove-_GSCourseInvitation
 
             If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
             {
-                Write-Warning "Cound not find Invitation as $($User)"
+                Write-Warning -Message ("Cound not find Invitation as {0}" -f $User)
+                Write-Verbose -Message $Exc.Exception.InnerException
                 Return $Id
             }
             If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
             {
-                Write-Warning "No right to remove Invitation as $($User)"
+                Write-Warning -Message ("No right to remove Invitation as {0}" -f $User)
+                Write-Verbose -Message $Exc.Exception.InnerException
                 Return $Id
             }
             If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
             {
-                Write-Warning "Google Classroom Service was unavailable"
+                Write-Warning -Message "Google Classroom Service was unavailable"
+                Write-Verbose -Message $Exc.Exception.InnerException
                 Start-Sleep -Seconds 5
                 Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
             }
             If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
             {
-                Write-Warning "Google Classroom Service was disconnected"
-                Write-Warning $Exc.Exception.InnerException
+                Write-Warning -Message "Google Classroom Service was disconnected"
+                Write-Verbose -Message $Exc.Exception.InnerException
                 Start-Sleep -Seconds 1
                 Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
             }
@@ -1333,32 +1368,36 @@ Function Remove-_GSCourseStudent
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
-                    Write-Verbose "Could not remove this Student: $($Student) from Course: $($CourseId) With User: $($User) Error: $($HttpStatusCode)"
+                    Write-Warning -Message ("Could not remove this Student: {0} from Course: {1} With User: {2}" -f $Student, $CourseId, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::Forbidden))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    Write-Warning "Could not remove this Student: $($Student) from Course: $($CourseId) With User: $($User) Error: $($HttpStatusCode)"
+                    Write-Warning -Message ("Could not remove this Student: {0} from Course: {1} With User: {2}" -f $Student, $CourseId, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
@@ -1411,43 +1450,49 @@ Function Add-_GSCourseTeacher
                     $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
                 }
 
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::BadRequest))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
-                    Write-Warning "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Write-Warning -Message ("Could not add this Teacher: {0} for Course: {1}" -f $Teacher, $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::NotFound))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
-                    Write-Verbose "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Write-Warning -Message ("Could not add this Teacher: {0} from Course: {1}" -f $Teacher, $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
-                If ($HttpStatusCode -in ([System.Net.HttpStatusCode]::Forbidden))
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    Write-Warning "Could not add this Teacher: $($Teacher) from Course: $($CourseId) Error: $($HttpStatusCode)"
+                    Write-Warning -Message ("Could not add this Teacher: {0} from Course: {1}" -f $Teacher, $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
-                    Write-Warning "Google Classroom Service was unavailable"
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
-                    Write-Warning "Google Classroom Service was disconnected"
-                    Write-Warning $Exc.Exception.InnerException
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
                 {
-                    Write-Verbose "This Teacher: $($Teacher) is already in Course: $($CourseId)"
+                    Write-Warning -Message ("This Teacher: {1} is already in Course: {1}" -f $Teacher, $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
                 If ($HttpStatusCode -eq 429)
