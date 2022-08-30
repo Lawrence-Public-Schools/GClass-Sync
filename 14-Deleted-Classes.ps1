@@ -79,7 +79,7 @@ Function Break-classes
     {
         Write-Host -Object "Archiving dead classes: $($OldActive.Count)"
         $NewArchived = @()
-        $NewArchived += $OldActive | ForEach-Object -Process {Update-GSCourse -Id $_.CourseId -CourseState ARCHIVED -Verbose}
+        $NewArchived += $OldActive.CourseId |  Update-_GSCourseState -CourseState ARCHIVED -Verbose
         $NeedUpdate += $BadCaches | Where-Object -Property CourseId -CIn -Value $NewArchived.Id
     }
     
@@ -87,14 +87,13 @@ Function Break-classes
     {
         Write-Host -Object "Hiding dead classes: $($OldSetup.Count)"
         $NewSetup = @()
-        $NewSetup += $OldSetup | ForEach-Object -Process {Update-GSCourse -Id $_.CourseId -CourseState DECLINED -Verbose}
+        $NewSetup += $OldSetup.CourseId | Update-_GSCourseState -CourseState DECLINED -Verbose
         $NeedUpdate += $BadCaches | Where-Object -Property CourseId -CIn -Value $NewSetup.Id
     }
 
     If($NeedUpdate.Count -gt 0)
     {
         Write-Host -Object "Updating dead classes: $($NeedUpdate.Count)"
-        $NeedUpdate.CourseAlias | Get-_GSCourse -BypassCache $true | Out-Null
         $NeedUpdate.sourcedId | Update-ClassLink -SkipCache $false -Domain $(Show-PSGSuiteConfig).Domain -Verbose
     }
 }
