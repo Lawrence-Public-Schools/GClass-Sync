@@ -99,13 +99,13 @@ Function update_per_class()
                 {
                     If ($Course.OwnerId -eq $FakeProfile.Id)
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState DECLINED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState DECLINED
                         Write-Verbose "Updating Empty $($ClassId) Of Faker"
                         $bState = $true
                     }
                     Else
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState ARCHIVED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState ARCHIVED
                         Write-Verbose "Updating Empty $($ClassId) Of Real"
                         $bState = $true
                     }
@@ -120,7 +120,7 @@ Function update_per_class()
                     If ($Course.OwnerId -eq $FakeProfile.Id) {}
                     Else
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState PROVISIONED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
                         #Write-Verbose "Updating Old $($ClassId) Of Real"
                         $bState = $true
                     }
@@ -132,13 +132,13 @@ Function update_per_class()
                 {
                     If ($Course.OwnerId -eq $FakeProfile.Id)
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState DECLINED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState DECLINED
                         Write-Verbose "Updating Blank $($ClassId) Of Faker"
                         $bState = $true
                     }
                     Else
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState DECLINED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState DECLINED
                         Write-Verbose "Updating Blank $($ClassId) Of Real"
                         $bState = $true
                     }
@@ -153,7 +153,7 @@ Function update_per_class()
                     If ($Course.OwnerId -eq $FakeProfile.Id) {}
                     Else
                     {
-                        $Course = Update-GSCourse -Id $ClassId -CourseState PROVISIONED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
                         Write-Verbose "Resetting Filled $($ClassId) Of Real"
                         $bState = $true
                     }
@@ -179,7 +179,7 @@ Function update_per_class()
         }
         If ($null -eq $Course)
         {
-            $Course = Get-_GSCourse -Id $ClassId
+            $Course = Get-_GSCourse -Id $ClassId -Verbose
         }
         If ($null -ne $Course -and $Course.Room -cne $Room -or $Course.Section -cne $Section)
         {
@@ -192,23 +192,41 @@ Function update_per_class()
             [console]::TreatControlCAsInput = $true
             If ($Course.CourseState -in ("ARCHIVED", "DECLINED"))
             {
-                $Course = Update-GSCourse -Id $ClassId -CourseState PROVISIONED
+                $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
             }
-            If ($Course.Room -cne $Room -and $Course.Section -cne $Section)
+            If ($null -eq $Course)
             {
-                $Course = Update-GSCourse -Id $ClassId -Room $Room -Section $Section
+                $Course = Get-_GSCourse -Id $ClassId -Verbose
             }
-            ElseIf ($Course.Room -cne $Room)
+            try
             {
-                $Course = Update-GSCourse -Id $ClassId -Room $Room
+                If ($Course.Room -cne $Room -and $Course.Section -cne $Section)
+                {
+                    $Course = $null
+                    $Course = Update-GSCourse -Id $ClassId -Room $Room -Section $Section
+                }
+                ElseIf ($Course.Room -cne $Room)
+                {
+                    $Course = $null
+                    $Course = Update-GSCourse -Id $ClassId -Room $Room
+                }
+                ElseIf ($Course.Section -cne $Section)
+                {
+                    $Course = $null
+                    $Course = Update-GSCourse -Id $ClassId -Section $Section
+                }
             }
-            ElseIf ($Course.Section -cne $Section)
+            catch
             {
-                $Course = Update-GSCourse -Id $ClassId -Section $Section
+                Write-Warning -Message "Failed to fixup $($ClassId)"
+            }
+            If ($null -eq $Course)
+            {
+                $Course = Get-_GSCourse -Id $ClassId -Verbose
             }
             If ($Course.CourseState -ne $oldState)
             {
-                $Course = Update-GSCourse -Id $ClassId -CourseState $oldState
+                $Course = Update-_GSCourseState -Id $ClassId -CourseState $oldState
             }
             [console]::TreatControlCAsInput = $false
         }
@@ -412,7 +430,7 @@ Function update_per_class()
                 Write-Warning "Changing Ownership from $($OldOwner) to $($Teacher) for $($ClassId) In $($Course.CourseState)"
                 If ($Course.CourseState -in ("DECLINED"))
                 {
-                    $Course = Update-GSCourse -Id $ClassId -CourseState PROVISIONED
+                    $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
                 }
                 $Course = $null
                 $Course = Update-GSCourse -Id $ClassId -OwnerId $Teacher
