@@ -173,7 +173,7 @@ Function make_missing_classes
         }
         If ($null -eq $Teacher)
         {
-            $enrollments_C | ConvertTo-Json -Depth 1 | Write-Warning
+            $enrollments_C.sourcedId | Write-Warning
             Write-Warning "There is no teacher for new classroom $($ClassId)"
             Write-Warning "Using fake teacher for new classroom $($ClassId)"
             $Teacher = $FakeTeacher
