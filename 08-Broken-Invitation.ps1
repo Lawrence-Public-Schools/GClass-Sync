@@ -48,13 +48,13 @@ Function remove_invitation
         If ($s -notin ("ACTIVE"))
         {
             [console]::TreatControlCAsInput = $true
-            $c = Update-GSCourse -Id $c.Id -CourseState PROVISIONED
+            $c = Update-_GSCourseState -Id $c.Id -CourseState PROVISIONED
         }
         $r = @()
         $r += $Invitation | Remove-_GSCourseInvitation -User $o.EmailAddress
         If ($c.CourseState -ne $s)
         {
-            $c = Update-GSCourse -Id $c.Id -CourseState $s
+            $c = Update-_GSCourseState -Id $c.Id -CourseState $s
             [console]::TreatControlCAsInput = $false
         }
         If ($r.Count -gt 0)
