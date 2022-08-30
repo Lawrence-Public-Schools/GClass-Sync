@@ -88,7 +88,7 @@ Function invite_class_student()
 
         If ($enrollments_I.Count -eq 0)
         {
-            Update-GSCourse -Id $ClassId -CourseState ARCHIVED -Verbose | Out-Null
+            Update-_GSCourseState -Id $ClassId -CourseState ARCHIVED -Verbose | Out-Null
             Return
         }
 
@@ -311,7 +311,7 @@ Function invite_class_student()
         If ($users_S_.Count -eq 0)
         {
             Write-Warning "Found Google Classroom that should be ARCHIVED: $($ClassID)"
-            Update-GSCourse -Id $ClassId -CourseState ARCHIVED -User $Teacher -Verbose | Out-Null
+            Update-_GSCourseState -Id $ClassId -CourseState ARCHIVED | Out-Null
         }
         ElseIf ($DS.Count -gt 0)
         {
