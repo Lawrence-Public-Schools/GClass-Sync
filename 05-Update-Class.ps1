@@ -275,13 +275,11 @@ Function update_per_class()
             }
             If ($users_C.Count -gt 0)
             {
-                Write-Warning "There are user records"
-                $users_C | ConvertTo-Json | Write-Warning
+                Write-Warning -Message ("There are user records: {0}" -f $users_C.sourcedId -join ";")
             }
             If ($enrollments_C.Count -gt 0 -and $users_C.Count -ne $enrollments_C.Count)
             {
-                Write-Warning "There are enrollment records"
-                $enrollments_C | ConvertTo-Json | Write-Warning
+                Write-Warning -Message ("There are enrollment records: {0}" -f $enrollments_C.sourcedId -join ";")
             }
         }
         $OwnerProfile = @()
