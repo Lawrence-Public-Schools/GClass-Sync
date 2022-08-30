@@ -927,26 +927,26 @@ Function Update-_GSCourseState
                     Write-Warning -Message "Google Classroom Service was unavailable"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return Update-_GSCourse -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                    Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
                     Write-Warning -Message "Google Classroom got an internal server error"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return Update-_GSCourse -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                    Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return Update-_GSCourse -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                    Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
                     HTTP429-TooManyRequests
-                    Return Update-_GSCourse -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                    Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
 
