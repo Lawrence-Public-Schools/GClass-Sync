@@ -340,7 +340,7 @@ Function invite_class_student()
         {
             Write-Verbose "Adding Students for $($ClassID): $($CP_Add -join ",")"
             
-            If ($CP_Add.Count -gt 40)
+            If (($CP_Add.Count -gt 40) -and $false)
             {
                 Write-Warning -Message "Setting limit of invites to the first 40 students"
                 $CP_Add = $CP_Add | Select-Object -First 40
