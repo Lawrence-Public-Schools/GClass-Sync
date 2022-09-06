@@ -342,7 +342,7 @@ Function invite_class_student()
             
             If ($CP_Add.Count -gt 500)
             {
-                Write-Warning -Message "Setting limit of invites to the first 40 students"
+                Write-Warning -Message "Setting limit of invites to the first 500 students"
                 $CP_Add = $CP_Add | Select-Object -First 500
             }
 
