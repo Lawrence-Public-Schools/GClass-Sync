@@ -1069,7 +1069,10 @@ Function Get-_GSCourseParticipant
                 Throw $Exc.Exception.InnerException
              }
         }
-        Return $r
+        If ($r.Count -ge 1)
+        {
+            Return $r
+        }
     }
 }
 
@@ -1158,7 +1161,7 @@ Function New-_GSCourseInvitation
                 Throw $Exc.Exception.InnerException
             }
         }
-        If ($r.Count -gt 0)
+        If ($r.Count -ge 1)
         {
             Return $r
         }
@@ -1260,10 +1263,9 @@ Function Confirm-_GSCourseInvitation
             $Exc = $_
             Write-Host $Exc.Exception
         }
-
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         Try
         {
-            $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
             $i += Confirm-GSCourseInvitation -Id $Id -User $User -ErrorAction Stop
         }
         Catch [System.Management.Automation.MethodInvocationException]
@@ -1322,6 +1324,10 @@ Function Confirm-_GSCourseInvitation
                 Throw $Exc.Exception.InnerException
              }
         }
+        If ($i.Count -ge 1)
+        {
+            Return $i
+        }
     }
 }
 
@@ -1358,9 +1364,9 @@ Function New-_GSCourse
     PROCESS
     {
         $r = @()
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         Try
         {
-            $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
             $r += New-GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -ErrorAction Stop
         }
         Catch [System.Management.Automation.MethodInvocationException]
@@ -1427,7 +1433,7 @@ Function New-_GSCourse
                 Throw $Exc.Exception.InnerException
              }
         }
-        If ($r.Count -gt 0)
+        If ($r.Count -ge 1)
         {
             Return $r
         } 
@@ -1447,64 +1453,72 @@ function Remove-_GSCourseInvitation
         [String]
         $User
     )
-    If ($Id -eq $null)
+    PROCESS
     {
-        Write-Error "No invites to remove"
-        Return
-    }
-    Try
-    {
-        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
-        $r = Remove-GSCourseInvitation -Id $Id -User $User -Confirm:$false -ErrorAction Stop
-    }
-    Catch [System.Management.Automation.MethodInvocationException]
-    {
-        $Exc = $_
-        If ($Exc.Exception.InnerException -eq $null)
+        $r = @()
+        If ($Id -eq $null)
         {
-            Throw $Exc.Exception
+            Write-Error "No invites to remove"
+            Return
         }
-        Else
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
+        Try
         {
-            If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+            $r += Remove-GSCourseInvitation -Id $Id -User $User -Confirm:$false -ErrorAction Stop
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            If ($Exc.Exception.InnerException -eq $null)
             {
-                $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                Throw $Exc.Exception
             }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
 
-            If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
-            {
-                Write-Warning -Message ("Cound not find Invitation as {0}" -f $User)
-                Write-Verbose -Message $Exc.Exception.InnerException
-                Return $Id
-            }
-            If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
-            {
-                Write-Warning -Message ("No right to remove Invitation as {0}" -f $User)
-                Write-Verbose -Message $Exc.Exception.InnerException
-                Return $Id
-            }
-            If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
-            {
-                Write-Warning -Message "Google Classroom Service was unavailable"
-                Write-Verbose -Message $Exc.Exception.InnerException
-                Start-Sleep -Seconds 5
-                Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
-            }
-            If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
-            {
-                Write-Warning -Message "Google Classroom Service was disconnected"
-                Write-Verbose -Message $Exc.Exception.InnerException
-                Start-Sleep -Seconds 1
-                Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
-            }
-            If ($HttpStatusCode -eq 429)
-            {
-                HTTP429-TooManyRequests
-                Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
-            }
-            Write-Warning $HttpStatusCode
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    Write-Warning -Message ("Cound not find Invitation as {0}" -f $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
+                {
+                    Write-Warning -Message ("No right to remove Invitation as {0}" -f $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
+                {
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 5
+                    Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
+                {
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq 429)
+                {
+                    HTTP429-TooManyRequests
+                    Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
+                }
+                Write-Warning $HttpStatusCode
 
-            Throw $Exc.Exception.InnerException
+                Throw $Exc.Exception.InnerException
+            }
+        }
+        If ($r.Count -ge 1)
+        {
+            Return $r
         }
     }
 }
@@ -1530,6 +1544,7 @@ Function Remove-_GSCourseStudent
     PROCESS
     {
         $r = @()
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         Try
         {
             $r += Remove-GSCourseParticipant -CourseId $CourseId -Student $Student -User $User -Confirm:$false -ErrorAction Stop
@@ -1592,6 +1607,10 @@ Function Remove-_GSCourseStudent
                 Throw $Exc.Exception.InnerException
              }
         }
+        If ($r.Count -ge 1)
+        {
+            Return $r
+        }
     }
 }
 
@@ -1612,6 +1631,7 @@ Function Add-_GSCourseTeacher
     PROCESS
     {
         $r = @()
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         Try
         {
             $r += Add-GSCourseParticipant -CourseId $CourseId -Teacher $Teacher -ErrorAction Stop
@@ -1685,6 +1705,10 @@ Function Add-_GSCourseTeacher
 
                 Throw $Exc.Exception.InnerException
              }
+        }
+        If ($r.Count -ge 1)
+        {
+            Return $r
         }
     }
 }
