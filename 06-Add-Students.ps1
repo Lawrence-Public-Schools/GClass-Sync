@@ -108,7 +108,7 @@ Function invite_class_student()
         $Teacher = $null
         If ($ClassLink_.Count -eq 1)
         {
-            $Teacher = $ClassLink_.EmailAddress
+            $Teacher = $ClassLink_.EmailAddress | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
         }
         $enrollments_C = @()
         $users_C = @()
@@ -140,7 +140,7 @@ Function invite_class_student()
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U[0].email
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
         If ($null -eq $Teacher)
@@ -160,7 +160,7 @@ Function invite_class_student()
             $Teachers_profiles += $Teachers.Profile | Where-Object -Property EmailAddress -NE -Value ""
             If ($Teachers_profiles.Count -gt 0)
             {
-                $Teacher = $Teachers_profiles[0].EmailAddress
+                $Teacher = $Teachers_profiles | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
         If ($null -eq $Teacher)
@@ -180,7 +180,7 @@ Function invite_class_student()
             }
             Else
             {
-                $Teacher = $users_C[0].email
+                $Teacher = $users_C.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
         If ($null -eq $Teacher)
@@ -350,7 +350,7 @@ Function invite_class_student()
             $NewInvites += $CP_Add | New-_GSCourseInvitation -CourseId $ClassId -Role STUDENT -User $Teacher
             If ($NewInvites.Count -gt 0)
             {
-                $r += ($OR_Students | Where-Object -Property Id -In -Value $NewInvites.UserId).EmailAddress
+                $r += $OR_Students | Where-Object -Property Id -In -Value $NewInvites.UserId |Select-Object -ExpandProperty EmailAddress
             }
         }
 
