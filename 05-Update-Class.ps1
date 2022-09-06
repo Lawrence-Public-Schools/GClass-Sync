@@ -382,7 +382,7 @@ Function update_per_class()
                 $Teacher = $FakeTeacher
             }
         }
-        ElseIf ($FakerIn -eq $true -and $OldOwner -ne $FakeTeacher)
+        ElseIf (($FakerIn -eq $true) -and ($OldOwner -ne $FakeTeacher) -and ($FakeProfile.Id -CNE $Course.OwnerId))
         {
             Remove-GSCourseParticipant -CourseId $ClassId -Teacher $FakeTeacher -User $FakeTeacher -Confirm:$false | Out-Null
             $FakerIn = $false
@@ -438,7 +438,7 @@ Function update_per_class()
                 If ($null -ne $Course)
                 {
                     $Owner = $Teacher
-                    If ($FakerIn -eq $true -and $Teacher -ne $FakeTeacher)
+                    If (($FakerIn -eq $true) -and ($OldOwner -ne $FakeTeacher) -and ($FakeProfile.Id -CEQ $Course.OwnerId))
                     {
                         Remove-GSCourseParticipant -CourseId $ClassId -Teacher $FakeTeacher -User $Owner -Confirm:$false -Verbose | Out-Null
                     }
