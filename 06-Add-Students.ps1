@@ -350,7 +350,7 @@ Function invite_class_student()
             $NewInvites += $CP_Add | New-_GSCourseInvitation -CourseId $ClassId -Role STUDENT -User $Teacher
             If ($NewInvites.Count -gt 0)
             {
-                $r += $OR_Students | Where-Object -Property Id -In -Value $NewInvites.UserId |Select-Object -ExpandProperty EmailAddress
+                $r += $OR_Students | Where-Object -Property Id -In -Value $NewInvites.UserId | Select-Object -ExpandProperty EmailAddress
             }
         }
 
