@@ -173,7 +173,14 @@ Function make_missing_classes
         }
         If ($null -eq $Teacher)
         {
-            $enrollments_C.sourcedId | Write-Warning
+            If ($enrollments_C.Count -gt 0)
+            {
+                Write-Warning -Message ("Enrollment records: {0}" -f ($enrollments_C.sourcedId -join ";"))
+            }
+            Else
+            {
+                Write-Warning -Message ("No Enrollment records found.")
+            }
             Write-Warning "There is no teacher for new classroom $($ClassId)"
             Write-Warning "Using fake teacher for new classroom $($ClassId)"
             $Teacher = $FakeTeacher
