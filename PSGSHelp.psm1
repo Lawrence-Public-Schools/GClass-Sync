@@ -1097,9 +1097,18 @@ Function New-_GSCourseInvitation
         [String]
         $User
     )
+    BEGIN
+    {
+        $Limited429 = $false
+    }
     PROCESS
     {
         $r = @()
+        If ($true -eq $Limited429)
+        {
+            Write-Verbose -Message "We hit a HTTP 429 limit, returning blanks"
+            Return
+        }
         $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         try
         {
@@ -1154,6 +1163,7 @@ Function New-_GSCourseInvitation
                 If ($HttpStatusCode -eq 429)
                 {
                     #HTTP429-TooManyRequests
+                    $Limited429 = $true
                     Start-Sleep -Seconds 1
                     Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
