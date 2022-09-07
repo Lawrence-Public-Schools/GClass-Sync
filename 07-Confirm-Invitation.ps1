@@ -42,7 +42,7 @@ Function eat_invitation
             $i = @()
             try {
                 $retry += 1
-                $i += Get-GSCourseInvitation -UserId $User -User $User -ErrorAction Stop | Sort-Object -Property Id | Sort-Object -Property CourseId -Unique
+                $i += Get-GSCourseInvitation -UserId $User -User $User -ErrorAction Stop
                 $retry -= 1
             } catch {
                 Write-Warning "Issues getting invites for user $($User)"
@@ -56,10 +56,11 @@ Function eat_invitation
             Else
             {
                 Return
-                Write-Host -Object "Found no Invitations                            : $($User)"
+                Write-Host -Object     "Found no Invitations                            : $($User)"
                 $retry -= 1
             }
-            $b = $i | Where-Object -Property CourseId -NotIn $GoodLink.CourseId
+            $b = @()
+            $b += $i | Where-Object -Property CourseId -NotIn $GoodLink.CourseId
             If ($b.Count -gt 0)
             {
                 Write-Verbose "Deleting outside $($b.Count) Invitation(s): $($User)"
@@ -83,7 +84,6 @@ Function eat_invitation
             Else
             {
                 #Write-Verbose "Found no Invitations under PowerSchool's control: $($User)"
-                $r = @()
                 $retry -= 1
             }
             $b = @()
