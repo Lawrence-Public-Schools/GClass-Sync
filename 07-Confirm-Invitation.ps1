@@ -34,77 +34,45 @@ Function eat_invitation
         Write-Progress -Activity "Confirming Google Classroom invitations" -Status "User $($User_Counter + 1) of $($User_Count): $($User)" -Id 0 -PercentComplete (($User_Counter * 100) /$User_Count)
         $User_Counter += 1
         $i = @()
-        $l = @()
-        #Write-Host -Object $User
-        $retry = 1
-        Do
-        {
-            $i = @()
-            try {
-                $retry += 1
-                $i += Get-GSCourseInvitation -UserId $User -User $User -ErrorAction Stop
-                $retry -= 1
-            } catch {
-                Write-Warning "Issues getting invites for user $($User)"
-                #$_ | ConvertTo-Json -Depth 2 | Write-Warning
-            }
-            $retry += 1
-            If ($i.Count -gt 0)
-            {
-                #Write-Verbose -Message "Found $($i.Count) Invite(s) for                           : $($User)"
-            }
-            Else
-            {
-                Return
-                Write-Host -Object     "Found no Invitations                            : $($User)"
-                $retry -= 1
-            }
-            $b = @()
-            $b += $i | Where-Object -Property CourseId -NotIn $GoodLink.CourseId
-            If ($b.Count -gt 0)
-            {
-                Write-Verbose "Deleting outside $($b.Count) Invitation(s): $($User)"
-                $b | ForEach-Object -Process {
-                    Remove-GSCourseInvitation -Id $b.Id -User $User -Confirm:$false -ErrorAction SilentlyContinue
-                } -Verbose | Out-Null
-                #$retry += 1
-            }
-            $g = $i | Where-Object -Property CourseId -In $GoodLink.CourseId
-            $r = @()
-            If ($g.Count -gt 0)
-            {
-                Write-Host -Object "Confirming $($g.Count) Invite(s) for $($User)"
-                $r += $g | Confirm-_GSCourseInvitation -User $User
-                If ($r.Count -eq 0)
-                {
-                    $retry -= 2
-                }
-                $retry += 1
-            }
-            Else
-            {
-                #Write-Verbose "Found no Invitations under PowerSchool's control: $($User)"
-                $retry -= 1
-            }
-            $b = @()
-            $b += $g | Where-Object -Property Id -NotIn $r.Id
-            If ($b.Count -gt 0)
-            {
-                Write-Host -Object "Found $($b.Count) broken invites"
-                #$r | ConvertTo-Json | Write-Warning
-                $l += $b
-                $retry = -1
-            }
-            Else
-            {
-                $retry -= 1
-            }
-        }
-        While ($retry -gt 0)
 
-        If ($l.Count -gt 0)
+        $i += Get-_GSCourseInvitationByUser -UserId $User
+        If ($i.Count -gt 0)
         {
-            Return $l
+            #Write-Verbose -Message "Found $($i.Count) Invite(s) for                           : $($User)"
+        }
+        Else
+        {
+            Return
+            Write-Host -Object     "Found no Invitations                            : $($User)"
+        }
+
+        $b = @()
+        #$b += $i | Where-Object -Property CourseId -NotIn $GoodLink.CourseId
+        If ($b.Count -gt 0)
+        {
+            Write-Verbose "Deleting outside $($b.Count) Invitation(s): $($User)"
+            $b | Remove-_GSCourseInvitation -user $User | Out-Null
+        }
+
+        $g = $i | Where-Object -Property CourseId -In $GoodLink.CourseId
+        $r = @()
+        If ($g.Count -gt 0)
+        {
+            Write-Host -Object "Confirming $($g.Count) Invite(s) for $($User)"
+            $r += $g | Confirm-_GSCourseInvitation -User $User
+        }
+        Else
+        {
+            #Write-Verbose "Found no Invitations under PowerSchool's control: $($User)"
+        }
+
+        $b = @()
+        $b += $g | Where-Object -Property Id -NotIn $r.Id
+        If ($b.Count -gt 0)
+        {
+            Write-Host -Object "Found $($b.Count) broken invites"
+            #$r | ConvertTo-Json | Write-Warning
+            Return $b
         }
     }
     END
