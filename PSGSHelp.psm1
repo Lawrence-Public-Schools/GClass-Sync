@@ -1153,8 +1153,8 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests -RetryMS 600000
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
+                    HTTP429-TooManyRequests -RetryMS 1000
+                    Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
                 
