@@ -1230,6 +1230,58 @@ Function Get-_GSCourseInvitationByCourse
                     Return Get-_GSCourseInvitationByCourse -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
+
+Function Get-_GSCourseInvitationByUser
+{
+    [OutputType('Google.Apis.Classroom.v1.Data.Invitation')]
+    Param
+    (
+        [parameter(Mandatory = $true)]
+        [String[]]
+        $UserId,
+        [parameter(Mandatory = $false)]
+        [ValidateSet('STUDENT','TEACHER','OWNER')]
+        [String[]]
+        $Role = @('STUDENT')
+    )
+    PROCESS
+    {
+        $r = @()
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
+        try
+        {
+            $r += Get-GSCourseInvitation -UserId $UserId -ErrorAction Stop
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            If ($Exc.Exception.InnerException -eq $null)
+            {
+                Throw $Exc.Exception
+            }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
+
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
+                {
+                    Write-Warning -Message ("Denied to to get {0} Invitations" -f $CourseId)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq 429)
+                {
+                    HTTP429-TooManyRequests
+                    Return Get-_GSCourseInvitationByUser -UserId $UserId -Verbose
+                }
+                Write-Warning $HttpStatusCode
                 
                 Throw $Exc.Exception.InnerException
             }
