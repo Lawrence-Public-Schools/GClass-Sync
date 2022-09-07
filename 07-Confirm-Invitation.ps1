@@ -85,7 +85,8 @@ Function eat_invitation
                 $r = @()
                 $retry -= 1
             }
-            If ($r.Count -gt 0)
+            $b = $g | Where-Object -Property CourseId -NotIn $r.CourseId  
+            If ($b.Count -gt 0)
             {
                 Write-Host -Object "Found $($r.Count) broken invites"
                 #$r | ConvertTo-Json | Write-Warning
