@@ -69,10 +69,11 @@ Function eat_invitation
                 #$retry += 1
             }
             $g = $i | Where-Object -Property CourseId -In $GoodLink.CourseId
+            $r = @()
             If ($g.Count -gt 0)
             {
                 Write-Host -Object "Confirming $($g.Count) Invite(s) for $($User)"
-                $r = $g | Confirm-_GSCourseInvitation -User $User
+                $r += $g | Confirm-_GSCourseInvitation -User $User
                 If ($r.Count -eq 0)
                 {
                     $retry -= 2
@@ -85,12 +86,12 @@ Function eat_invitation
                 $r = @()
                 $retry -= 1
             }
-            $b = $g | Where-Object -Property CourseId -NotIn $r.CourseId  
+            $b = $r | Where-Object -Property CourseId -NotIn $r.CourseId
             If ($b.Count -gt 0)
             {
-                Write-Host -Object "Found $($r.Count) broken invites"
+                Write-Host -Object "Found $($b.Count) broken invites"
                 #$r | ConvertTo-Json | Write-Warning
-                $l += $r
+                $l += $b
                 $retry = -1
             }
             Else
