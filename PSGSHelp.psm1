@@ -1153,7 +1153,8 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests -RetryMS 1000
+                    #HTTP429-TooManyRequests
+                    Start-Sleep -Seconds 1
                     Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
