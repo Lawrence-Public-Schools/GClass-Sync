@@ -56,7 +56,7 @@ Function Find_students()
 
     If ($odd.Count -gt 0)
     {
-        Write-Host -Object "Convert odd hits into good hits?: $($odd.EmailAddress)"
+        Write-Host -Object ("Convert odd hits into good hits?: {0}" -f $odd.EmailAddress)
     }
 
     $fat = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true | dropdeaduser | rolelimit
@@ -64,7 +64,7 @@ Function Find_students()
 
     If ($good.Count -gt 0)
     {
-        Write-Verbose "Convert bad hits into good hits: $($good | ConvertTo-Json -Depth 1)"
+        Write-Verbose -Message ("Convert bad hits into good hits: {0}" -f ($good | ConvertTo-Json -Depth 1))
         $hits = @()
         $hits += $good.EmailAddress
         $hits += $good.Id
@@ -120,4 +120,4 @@ Function Find_students()
 
 }
 
-$r = Find_students -WorkFolder $WorkFolder -Verbose
+$r = Find_students -WorkFolder $WorkFolder
