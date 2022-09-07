@@ -1179,7 +1179,7 @@ Function New-_GSCourseInvitation
     }
 }
 
-Function Get-_GSCourseInvitation
+Function Get-_GSCourseInvitationByCourse
 {
     [OutputType('Google.Apis.Classroom.v1.Data.Invitation')]
     Param
@@ -1227,7 +1227,7 @@ Function Get-_GSCourseInvitation
                 If ($HttpStatusCode -eq 429)
                 {
                     HTTP429-TooManyRequests
-                    Return Get-_GSCourseInvitation -CourseId $CourseId -Role $Role -Verbose
+                    Return Get-_GSCourseInvitationByCourse -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
                 

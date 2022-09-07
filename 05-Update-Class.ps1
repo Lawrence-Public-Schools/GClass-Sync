@@ -395,7 +395,7 @@ Function update_per_class()
         If ($enrollments_S_.Count -eq 0)
         {
             $All_Invites = @()
-            $All_Invites += Get-_GSCourseInvitation -CourseId $ClassId -Role OWNER, TEACHER, STUDENT
+            $All_Invites += Get-_GSCourseInvitationByCourse -CourseId $ClassId -Role OWNER, TEACHER, STUDENT
             $Remover = $null
             If ($FakerIn -eq $true -or $Teacher -eq $FakeTeacher)
             {
@@ -456,7 +456,7 @@ Function update_per_class()
         If ($Course.CourseState -in ("PROVISIONED","DECLINED"))
         {
             $Broken_Invites = @()
-            $Broken_Invites += Get-_GSCourseInvitation -CourseId $ClassId -Role STUDENT
+            $Broken_Invites += Get-_GSCourseInvitationByCourse -CourseId $ClassId -Role STUDENT
             If ($Broken_Invites.Count -gt 0)
             {
                 Write-Host "Found  $($Broken_Invites.Count) broken Invites for $($ClassId)"

@@ -208,7 +208,7 @@ Function invite_class_student()
             $Outsiders | ConvertTo-Json | Write-Warning
         }
         $GCR_Invitations = @()
-        $GCR_Invitations += Get-_GSCourseInvitation -CourseId $ClassId -Role STUDENT
+        $GCR_Invitations += Get-_GSCourseInvitationByCourse -CourseId $ClassId -Role STUDENT
         $GCR_Incoming = @()
         If ($GCR_Invitations.Count -gt 0)
         {
