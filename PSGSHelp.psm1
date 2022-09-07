@@ -1220,7 +1220,6 @@ Function Get-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
-                    #Write-Warning -Message ("Google Classroom {0} had changed state" -f $CourseId)
                     Write-Warning -Message ("Denied to to get {0} Invitations" -f $CourseId)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
@@ -1265,15 +1264,6 @@ Function Confirm-_GSCourseInvitation
     PROCESS
     {
         $i = @()
-        Try
-        {
-            #$id = Get-GSCourseInvitation -Id $Id -User $User -ErrorAction Stop | Select-Object -ExpandProperty Id
-        }
-        Catch
-        {
-            $Exc = $_
-            Write-Host $Exc.Exception
-        }
         $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         Try
         {
@@ -1356,6 +1346,10 @@ Function New-_GSCourse
         [Alias('Teacher')]
         [String]
         $OwnerId,
+        [parameter(Mandatory = $false)]
+        [Alias('Backup')]
+        [String]
+        $FallBackId = $null,
         [parameter(Mandatory = $true)]
         [Alias('Alias')]
         [String]
@@ -1398,6 +1392,10 @@ Function New-_GSCourse
                 {
                     Write-Warning -Message ("Google User {0} can not make a Google Classroom" -f $OwnerId)
                     Write-Verbose -Message $Exc.Exception.InnerException
+                    If ($null -ne $FallBackId)
+                    {
+                        Return New-_GSCourse -Name $Name -OwnerId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    }
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
