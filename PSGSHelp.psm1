@@ -1627,6 +1627,96 @@ Function Remove-_GSCourseStudent
     }
 }
 
+Function Remove-_GSCourseTeacher
+{
+    Param
+    (
+        [parameter(Mandatory = $true,Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $CourseId,
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [ValidateNotNullOrEmpty()]
+        [Alias('PrimaryEmail','Email','Mail', 'Id')]
+        [String]
+        $Teacher,
+        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $User
+    )
+    PROCESS
+    {
+        $r = @()
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
+        Try
+        {
+            $r += Remove-GSCourseParticipant -CourseId $CourseId -Teacher $Teacher -User $User -Confirm:$false -ErrorAction Stop
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            #Write-Host $Exc.Exception
+            If ($Exc.Exception.InnerException -eq $null)
+            {
+                Throw $Exc.Exception
+            }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
+
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    Write-Warning -Message ("Could not remove this Teacher: {0} from Course: {1} With User: {2}" -f $Teacher, $CourseId, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
+                {
+                    Write-Warning -Message ("Could not remove this Teacher: {0} from Course: {1} With User: {2}" -f $Teacher, $CourseId, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
+                {
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 5
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
+                {
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 5
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
+                {
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq 429)
+                {
+                    HTTP429-TooManyRequests
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
+                }
+                Write-Warning $HttpStatusCode
+
+                Throw $Exc.Exception.InnerException
+             }
+        }
+        If ($r.Count -ge 1)
+        {
+            Return $r
+        }
+    }
+}
 Function Add-_GSCourseTeacher
 {
     Param
