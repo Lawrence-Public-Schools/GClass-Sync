@@ -1402,6 +1402,10 @@ Function New-_GSCourse
                 {
                     Write-Warning -Message ("Google User {0} can not make a Google Classroom" -f $OwnerId)
                     Write-Verbose -Message $Exc.Exception.InnerException
+                    If ($null -ne $FallBackId)
+                    {
+                        Return New-_GSCourse -Name $Name -OwnerId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    }
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
@@ -1409,21 +1413,21 @@ Function New-_GSCourse
                     Write-Warning -Message "Google Classroom Service was unavailable"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
-                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
                 {
                     Write-Warning -Message "Google Classroom Service had an internal server error, retry?"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
-                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
                 {
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
                 {
@@ -1435,7 +1439,7 @@ Function New-_GSCourse
                 If ($HttpStatusCode -eq 429)
                 {
                     HTTP429-TooManyRequests
-                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 Write-Warning $HttpStatusCode
 
