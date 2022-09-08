@@ -65,15 +65,15 @@ Function Invite_guardian()
                 $StudentGuardianInvitation = $StudentGuardianInvitations | Where-Object -Property InvitedEmailAddress -EQ -Value $Guardianemail
             }
 
-            If ($Guardian -ceq $null)
+            If ($null -ceq $Guardian )
             {
                 #Write-Verbose -Message ("Skipping {0} for blank email" -f $GuardianId)
             }
-            ElseIf ($StudentGuardian -cne $null)
+            ElseIf ($null -cne $StudentGuardian)
             {
                 #Write-Host -Object ("{0} already have {1}" -f $Student.Iemail,$Guardianemail)
             }
-            ElseIf ($StudentGuardianInvitation -cne $null)
+            ElseIf ($null -cne $StudentGuardianInvitation)
             {
                 #Write-Host -Object ("{0} already invite {1}" -f $Student.Iemail,$Guardianemail)
             }
