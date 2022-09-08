@@ -83,14 +83,14 @@ Function Classroom_Listing {
         [Parameter(Mandatory = $true)]
         [String]$ReportFolder
     )
-    
-    #If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
-    #{
-    #    Write-Host -Object "Switching to $($Domain)"
-    #    Switch-PSGSuiteConfig -ConfigName $Domain
-    #    $DNSDomain = $(Show-PSGSuiteConfig).Domain
-    #}
-    
+
+    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne $Domain)
+    {
+        Write-Host -Object "Switching to $($Domain)"
+        Switch-PSGSuiteConfig -ConfigName $Domain
+        $DNSDomain = $(Show-PSGSuiteConfig).Domain
+    }
+
     $Report_FP = Join-Path -Path $ReportFolder -ChildPath "Listing.csv"
     Read-ORclasses -FolderPath $WorkFolder -LoadXML $true | ForEach-Object -Begin {
         Write-Host -Object "Loadding Schools"
