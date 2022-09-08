@@ -268,7 +268,7 @@ Function invite_class_student()
         $CP_Del = @()
         If ($OR_Students.Count -gt 0 -and $GCR_Students.Count -gt 0)
         {
-            $diff = Compare-Object -ReferenceObject ($OR_Students) -DifferenceObject ($GCR_Students) -Property EmailAddress -Verbose 
+            $diff = Compare-Object -ReferenceObject ($OR_Students) -DifferenceObject ($GCR_Students) -Property EmailAddress -Verbose
             $diff_RO = @()
             $diff_DO = @()
             $diff_RO += $diff | Where-Object -Property SideIndicator -CEQ "<="
@@ -339,7 +339,7 @@ Function invite_class_student()
         If ($CP_Add.Count -gt 0)
         {
             Write-Verbose "Adding Students for $($ClassID): $($CP_Add -join ",")"
-            
+
             If ($CP_Add.Count -gt 500)
             {
                 Write-Warning -Message "Setting limit of invites to the first 500 students"
