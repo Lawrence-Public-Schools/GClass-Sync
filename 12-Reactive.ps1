@@ -49,7 +49,7 @@ Function Reactive_students()
     } -End {
         Write-Host -Object "Done reenabling users"
     } -Verbose
-    
+
     If ($r.Count -eq 0)
     {
         Write-Warning -Message "Could not active any Google accounts"
@@ -97,7 +97,7 @@ Function Disactive_students()
     } -End {
         Write-Host -Object "Done disabling users"
     } -Verbose
-    
+
     If ($r.Count -eq 0)
     {
         Write-Warning -Message "Could not disable any Google accounts"
