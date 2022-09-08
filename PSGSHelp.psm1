@@ -1093,7 +1093,10 @@ Function New-_GSCourseInvitation
         $Role = 'STUDENT',
         [parameter(Mandatory = $true,ValueFromPipelineByPropertyName = $true)]
         [String]
-        $User
+        $User,
+        [parameter(Mandatory = $false)]
+        [String]
+        $FallBack = "me"
     )
     BEGIN
     {
@@ -1135,6 +1138,10 @@ Function New-_GSCourseInvitation
                     #Write-Warning -Message "Google Classroom $($CourseId) had changed state"
                     Write-Warning -Message ("Failed to add {0} As {1} As {2}" -f $UserId, $Role, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
+                    If ($null -cne $Fallback)
+                    {
+                        Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $FallBack -FallBack $null -Verbose
+                    }
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
@@ -1142,7 +1149,7 @@ Function New-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was unavailable"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
+                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -FallBack $FallBack -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
@@ -1156,7 +1163,7 @@ Function New-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
+                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -FallBack $FallBack -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
