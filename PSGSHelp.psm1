@@ -1133,7 +1133,7 @@ Function New-_GSCourseInvitation
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
                     #Write-Warning -Message "Google Classroom $($CourseId) had changed state"
-                    Write-Warning -Message ("Couldn't add disabled {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Warning -Message ("Couldn't add non-Classroom User {0} As {1} As {2}" -f $UserId, $Role, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
