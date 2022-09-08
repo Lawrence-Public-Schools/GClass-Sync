@@ -18,7 +18,7 @@ $ErrorActionPreference = "Stop"
 
 Function Make_class_alias()
 {
-    [OutputType('String')]
+    [OutputType('System.String')]
     [CmdletBinding()]
     Param
     (
