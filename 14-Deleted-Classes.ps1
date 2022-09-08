@@ -70,7 +70,7 @@ Function Break-classes
 
     $OldActive = @()
     $OldActive += $BadCaches | Where-Object -Property CourseState -EQ "ACTIVE"
-    
+
     $OldSetup = @()
     $OldSetup += $BadCaches | Where-Object -Property CourseState -EQ "PROVISIONED"
 
@@ -82,7 +82,7 @@ Function Break-classes
         $NewArchived += $OldActive.CourseId |  Update-_GSCourseState -CourseState ARCHIVED -Verbose
         $NeedUpdate += $BadCaches | Where-Object -Property CourseId -CIn -Value $NewArchived.Id
     }
-    
+
     If($OldSetup.Count -gt 0)
     {
         Write-Host -Object "Hiding dead classes: $($OldSetup.Count)"
