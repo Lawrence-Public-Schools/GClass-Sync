@@ -157,8 +157,6 @@ Function process_fixup_enrollment
         [OR_enrollment]
         $enrollment_E,
         [String]
-        $FolderPath_I,
-        [String]
         $FolderPath_O
     )
     BEGIN
@@ -213,8 +211,6 @@ Function process_fixup_classes
         [OR_class]
         $Class_E,
         [String]
-        $FolderPath_I,
-        [String]
         $FolderPath_O
     )
     BEGIN
@@ -225,7 +221,7 @@ Function process_fixup_classes
         $enrollments_IP = $enrollments_I | Where-Object -Property primary -EQ -Value $true
         $enrollments_IS = $enrollments_I | Where-Object -Property role -EQ -Value "student"
         $enrollments_LP = $enrollments_IP.classSourcedId
-        $enrollments_LS = $enrollments_IS.classSourcedId | Sort-Object | Get-Unique
+        $enrollments_LS = $enrollments_IS | Group-Object -Property classSourcedId -NoElement | Select-Object -ExpandProperty Name
         $Org_I = Read-OROrgs -FolderPath $FolderPath_O
     }
     PROCESS
@@ -271,7 +267,7 @@ Function main_fixup_enrollments
         Write-Host -Object "Fixup enrollments: Loading"
         $BeginLayway = [TimeSpan]::FromDays(21)
         $EndLayway = [TimeSpan]::FromDays(-7)
-        Read-ORenrollments -FolderPath $InputFolder | Limit-OREnrollmentByDate -BeginLayway $BeginLayway -EndLayway $EndLayway | process_fixup_enrollment -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $enrollments_O_FP
+        Read-ORenrollments -FolderPath $InputFolder | Limit-OREnrollmentByDate -BeginLayway $BeginLayway -EndLayway $EndLayway | process_fixup_enrollment -FolderPath_O $OutputFolder | Export-Clixml -Path $enrollments_O_FP
         Write-Host -Object "Fixup enrollments: Done"
     }
 }
@@ -295,7 +291,7 @@ Function main_fixup_classes
         Write-Host -Object "Fixup classes: Loading"
         If ($OrgFilter -EQ "")
         {
-            Read-ORclasses -FolderPath $InputFolder | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+            Read-ORclasses -FolderPath $InputFolder | process_fixup_classes -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
         }
         Else
         {
@@ -332,7 +328,7 @@ Function main
         [String]$OutputFolder,
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]
-        [String]$OrgFilter = ""
+        [String]$OrgFilter
     )
     PROCESS
     {
