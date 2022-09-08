@@ -1110,6 +1110,10 @@ Function New-_GSCourseInvitation
             Write-Verbose -Message "We hit a HTTP 429 limit, returning blanks"
             Return
         }
+        If ([String]::IsNullOrEmpty($User))
+        {
+            Return
+        }
         $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         try
         {
