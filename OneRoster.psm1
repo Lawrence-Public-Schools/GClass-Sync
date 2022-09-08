@@ -7,10 +7,10 @@ $OneRoster_Source = @"
 using System;
 using System.Management.Automation;
 using System.Collections.Generic;
- 
+
 namespace OneRoster_FastSearch
 {
- 
+
     public static class Search
     {
         public static List<Object> FindAll(PSObject[] collection, string column, string data)
@@ -20,7 +20,7 @@ namespace OneRoster_FastSearch
             {
                 if (item.Properties[column].Value.ToString() == data) { results.Add(item); }
             }
- 
+
             return results;
         }
 
@@ -30,7 +30,7 @@ namespace OneRoster_FastSearch
             {
                 if (item.Properties[column].Value.ToString() == data) { return item; }
             }
- 
+
             return null;
         }
     }
@@ -443,7 +443,6 @@ Function Out-ORacademicSession
             $_.ToString()
         } | Out-File -Append -Encoding $Encoding -FilePath $FilePath
     }
-   
 }
 
 Function Read-ORAcademicSessions
@@ -1022,7 +1021,7 @@ Function Read-ORenrollments
     {
         If ($LoadXML -eq $true)
         {
-            If ($Org -eq $null)
+            If ($null -ceq $Org)
             {
                 $FileName = "enrollments.xml"
             }
@@ -1033,7 +1032,7 @@ Function Read-ORenrollments
         }
         Else
         {
-            If ($Org -eq $null)
+            If ($null -ceq $Org)
             {
                 $FileName = "enrollments.csv"
             }
@@ -1259,7 +1258,7 @@ Function Read-ORclasses
     {
         If ($LoadXML -eq $true)
         {
-            If ($Org -eq $null)
+            If ($null -ceq $Org)
             {
                 $FileName = "classes.xml"
             }
@@ -1270,7 +1269,7 @@ Function Read-ORclasses
         }
         Else
         {
-            If ($Org -eq $null)
+            If ($null -ceq $Org)
             {
                 $FileName = "classes.csv"
             }
@@ -1511,7 +1510,7 @@ Function Read-ORUsers
     {
         If ($LoadXML -eq $true)
         {
-            If ($Org -eq $null)
+            If ($null -ceq $Org)
             {
                 $FilePath = Join-Path -Path $FolderPath -ChildPath "users.xml"
             }
@@ -1522,7 +1521,7 @@ Function Read-ORUsers
         }
         Else
         {
-            IF ($Org -eq $null)
+            IF ($null -ceq $Org)
             {
                 $FilePath = Join-Path -Path $FolderPath -ChildPath "users.csv"
             }
@@ -1585,7 +1584,7 @@ Function Find-ORClasses
         {
             Write-Verbose "Find-ORClasses: Starting"
         }
-        
+
         $academicSessions_F = $null
         If ($academicSessions.Count -gt 0)
         {
@@ -1602,7 +1601,7 @@ Function Find-ORClasses
         }
 
         $classes_I = @()
-        If ($academicSessions_F -eq $null)
+        If ($null -ceq $academicSessions_F)
         {
             $classes_I += Read-ORclasses -FolderPath $FolderPath
         }
@@ -1667,7 +1666,7 @@ Function Find-ORClassesByCourse
         {
             Write-Verbose "Find-ORClassesByCourse: Starting"
         }
-        
+
         $academicSessions_F = $null
         If ($academicSessions.Count -gt 0)
         {
@@ -1684,7 +1683,7 @@ Function Find-ORClassesByCourse
         }
 
         $classes_I = @()
-        If ($academicSessions_F -eq $null)
+        If ($null -ceq $academicSessions_F)
         {
             $classes_I += Read-ORclasses -FolderPath $FolderPath
         }
@@ -1706,7 +1705,7 @@ Function Find-ORClassesByCourse
     {
         If ($ProgressId -ge 0)
         {
-            If ($course_E -eq $null)
+            If ($null -ceq $course_E)
             {
                 $title = "Any"
             }
@@ -1718,7 +1717,7 @@ Function Find-ORClassesByCourse
             Write-Progress -Activity "Processing OneRoster Classes By Course: $($title)" -Status "Process" -Id $ProgressId
         }
 
-        If ($course_E -eq $null)
+        If ($null -ceq $course_E)
         {
             Return $classes_I
         }
@@ -1766,7 +1765,7 @@ Function Find-ORClassesByOrg
         {
             Write-Verbose "Find-ORClassesByOrg: Starting"
         }
-        
+
         $academicSessions_F = $null
         If ($academicSessions.Count -gt 0)
         {
@@ -1783,7 +1782,7 @@ Function Find-ORClassesByOrg
         }
 
         $classes_I = @()
-        If ($academicSessions_F -eq $null)
+        If ($null -ceq $academicSessions_F)
         {
             $classes_I += Read-ORclasses -FolderPath $FolderPath
         }
@@ -1805,9 +1804,9 @@ Function Find-ORClassesByOrg
     {
         If ($ProgressId -ge 0)
         {
-            If ($org_E -eq $null)
+            If ($null -ceq $org_E)
             {
-                $title = "Any"    
+                $title = "Any"
             }
             Else
             {
@@ -1817,7 +1816,7 @@ Function Find-ORClassesByOrg
             Write-Progress -Activity "Processing OneRoster Classes By Org: $($title)" -Status "Process" -Id $ProgressId
         }
 
-        If ($org_E -eq $null)
+        If ($null -ceq $org_E)
         {
             Return $classes_I
         }
@@ -1865,7 +1864,7 @@ Function Find-ORCourses
         {
             Write-Verbose "Find-ORCourses: Starting"
         }
-        
+
         $academicSessions_F = $null
         If ($academicSessions.Count -gt 0)
         {
@@ -1882,7 +1881,7 @@ Function Find-ORCourses
         }
 
         $Courses_I = @()
-        If ($academicSessions_F -eq $null)
+        If ($null -ceq $academicSessions_F)
         {
             $Courses_I += Read-ORCourses -FolderPath $FolderPath
         }
@@ -1904,7 +1903,7 @@ Function Find-ORCourses
     {
         If ($ProgressId -ge 0)
         {
-            If ($org_E -eq $null)
+            If ($null -ceq $org_E)
             {
                 Write-Progress -Activity "Processing OneRoster Course" -Status "Process" -Id $ProgressId
             }
@@ -1914,7 +1913,7 @@ Function Find-ORCourses
             }
         }
 
-        If ($org_E -eq $null)
+        If ($null -ceq $org_E)
         {
             Return $Courses_I
         }
@@ -1962,7 +1961,7 @@ Function Find-OROrgs
         {
             Write-Verbose "Find-OROrgs: Starting"
         }
-        
+
         $orgs_F = $null
         If ($orgs.Count -gt 0)
         {
@@ -1979,7 +1978,7 @@ Function Find-OROrgs
         }
 
         $Orgs_I = @()
-        If ($org_F -eq $null)
+        If ($null -ceq $org_F)
         {
             $Orgs_I += Read-OROrgs -FolderPath $FolderPath
         }
@@ -2001,7 +2000,7 @@ Function Find-OROrgs
     {
         If ($ProgressId -ge 0)
         {
-            If ($org_E -eq $null)
+            If ($null -ceq $org_E)
             {
                 $name = "Any"
             }
@@ -2012,7 +2011,7 @@ Function Find-OROrgs
             Write-Progress -Activity "Processing OneRoster Orgs By Org: $($name)" -Status "Process" -Id $ProgressId
         }
 
-        If ($org_E -eq $null)
+        If ($null -ceq $org_E)
         {
             Return $Orgs_I
         }
@@ -2193,18 +2192,18 @@ Function Split-OREnrollments
     PROCESS
     {
         $out = @()
-        If ($org_E -eq $null)
+        If ($null -ceq $org_E)
         {
             $out += $raw
         }
-        ElseIf ($raw -ne $null -and $raw.Count -gt 0)
+        ElseIf ($null -cne $raw -and $raw.Count -gt 0)
         {
             $sourcedId = $org_E.sourcedId
             $out += [OneRoster_FastSearch.Search]::FindAll($raw,"schoolSourcedId",$sourcedId) #$raw | Where-Object -Property schoolSourcedId -CEQ -Value $sourcedId
         }
         If ($XMLOutput -eq $true)
         {
-            If ($org_E -eq $null)
+            If ($null -ceq $org_E)
             {
                 $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "enrollments.xml"
             }
@@ -2275,7 +2274,7 @@ Function Split-ORUsers
     PROCESS
     {
         $out = @()
-        If ($org_E -eq $null)
+        If ($null -ceq $org_E)
         {
             $out += $raw
         }
@@ -2293,7 +2292,7 @@ Function Split-ORUsers
         }
         If ($XMLOutput -eq $true)
         {
-            If ($org_E -eq $null)
+            If ($null -ceq $org_E)
             {
                 $OutputFP = Join-Path -Path $DestFolderPath -ChildPath "users.xml"
             }
@@ -2338,7 +2337,7 @@ Function Split-ORUsers
 #---------------------------------------------------------------------------------------------------------------------------------
 
 Function Limit-ORUserBysourcedId #USED
-{ 
+{
     #[OutputType('OR_user')]
     [CmdletBinding()]
     Param
@@ -2359,7 +2358,7 @@ Function Limit-ORUserBysourcedId #USED
 }
 
 Function Limit-ORUserBystatus #UNUSED
-{ 
+{
     #[OutputType('OR_user')]
     [CmdletBinding()]
     Param
@@ -2370,7 +2369,7 @@ Function Limit-ORUserBystatus #UNUSED
         $user_E,
         [Parameter(Mandatory = $true)]
         [OR_StatusType[]]
-        $status 
+        $status
     )
     PROCESS
     {
@@ -2481,7 +2480,6 @@ Function Limit-OREnrollmentByschoolSourcedId #USED
         [String[]]
         $schoolSourcedId
     )
- 
     PROCESS
     {
         Write-Warning "PLEASE USE GROUPING for Limit-OREnrollmentByschoolSourcedId"
@@ -2600,7 +2598,7 @@ Function Limit-OREnrollmentOnlyPrimaryTeacher #USED
 }
 
 Function Limit-ORUserByschoolSourcedId #UNUSED
-{ 
+{
     #[OutputType('OR_user')]
     [CmdletBinding()]
     Param
@@ -2611,17 +2609,17 @@ Function Limit-ORUserByschoolSourcedId #UNUSED
         $user_E,
         [Parameter(Mandatory = $true)]
         [String[]]
-        $schoolSourcedId 
+        $schoolSourcedId
     )
     PROCESS
     {
         #Write-Warning "Limit-ORUserByschoolSourcedId"
-        $user_E | Where-Object -FilterScript {$sourcedId -cin $_.sourcedId} #-Property sourcedId -CIn -Value $sourcedId
+        $user_E | Where-Object -FilterScript -Property sourcedId -CContains -Value $schoolSourcedId
     }
 }
 
 Function Limit-ORUserByorgSourcedIds #USED
-{ 
+{
     #[OutputType('OR_user')]
     [CmdletBinding()]
     Param
@@ -2637,6 +2635,6 @@ Function Limit-ORUserByorgSourcedIds #USED
     PROCESS
     {
         Write-Warning "Limit-ORUserByorgSourcedIds"
-        $user_E | Where-Object -FilterScript {$orgSourcedIds -cin $_.orgSourcedIds} #-Property orgSourcedIds -CIn -Value $orgSourcedIds
+        $user_E | Where-Object -Property orgSourcedIds -CContains -Value $orgSourcedIds
     }
 }
