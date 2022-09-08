@@ -47,7 +47,7 @@ namespace PSGSHelp_FastSearch
 
 Add-Type -ReferencedAssemblies $Assem -TypeDefinition $PSGSHelp_Source -Language CSharp
 
-Function Invoke-HTTP429-TMRS
+Function Invoke-HTTP429
 {
 
     [OutputType('Void')]
@@ -413,7 +413,7 @@ Function Get-_GSClassroomUserProfile
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -767,7 +767,7 @@ Function Get-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -943,7 +943,7 @@ Function Update-_GSCourseState
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1059,7 +1059,7 @@ Function Get-_GSCourseParticipant
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1160,7 +1160,7 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    #Invoke-HTTP429-TMRS
+                    #Invoke-HTTP429
                     $Limited429 = $true
                     Start-Sleep -Seconds 1
                     Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
@@ -1224,7 +1224,7 @@ Function Get-_GSCourseInvitationByCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Get-_GSCourseInvitationByCourse -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1293,7 +1293,7 @@ Function Get-_GSCourseInvitationByUser
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Get-_GSCourseInvitationByUser -UserId $UserId -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1384,7 +1384,7 @@ Function Confirm-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1505,7 +1505,7 @@ Function New-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1588,7 +1588,7 @@ function Remove-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1679,7 +1679,7 @@ Function Remove-_GSCourseStudent
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1770,7 +1770,7 @@ Function Remove-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1869,7 +1869,7 @@ Function Add-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    Invoke-HTTP429-TMRS
+                    Invoke-HTTP429
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 Write-Warning $HttpStatusCode
