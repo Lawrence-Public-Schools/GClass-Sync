@@ -6,10 +6,10 @@ Get-Module -Name PSGSHelp | Remove-Module;Import-Module .\PSGSHelp.psm1
 
 Function New-ClassAlias
 {
-    [OutputType('String')]
+    [OutputType('System.String')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory = $true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [Alias('classSourcedId')]
         [String]$sourcedId
@@ -73,15 +73,15 @@ Function Get-ClassLink
                 $o.EnrollmentCode = $c.EnrollmentCode
             }
         }
-        If ($o.OwnerId -ne $null)
+        If ($null -cne $o.OwnerId)
         {
             $p = $null
             $p = $o.OwnerId | Get-_GSClassroomUserProfile -CacheOnly $true
-            If ($p -eq $null)
+            If ($null -ceq $p)
             {
                 Write-Warning "$($a): No Cached Owner"
                 $p = $o.OwnerId | Get-_GSClassroomUserProfile -SkipCache $true
-                If ($p -eq $null)
+                If ($null -ceq $p)
                 {
                     Write-Warning "$($a): No Domain Owner"
                 }
@@ -90,7 +90,7 @@ Function Get-ClassLink
                     Write-Warning "Outside teacher: $($p.EmailAddress)"
                 }
             }
-            If ($p -ne $null -and $p.EmailAddress -ne "")
+            If ($null -cne $p -and $p.EmailAddress -ne "")
             {
                 $o.EmailAddress = $p.EmailAddress
             }
@@ -104,7 +104,7 @@ Function Export-ClassLink
     [OutputType('Void')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory = $true)]
         [Object]$InputObject,
         [parameter(Mandatory = $false)]
@@ -143,7 +143,7 @@ Function Update-ClassLink
     (
         [Parameter(Mandatory = $true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [Alias('classSourcedId')]
-        [String[]]$sourcedId = @(),
+        [String[]]$sourcedId,
         [parameter(Mandatory = $false)]
         [String]
         $Path = ".\",
