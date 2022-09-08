@@ -1392,7 +1392,7 @@ Function Confirm-_GSCourseInvitation
                 Throw $Exc.Exception.InnerException
              }
         }
-        If ($i.Count -ge 1)
+        If ($i.Count -gt 0)
         {
             Return $i
         }
