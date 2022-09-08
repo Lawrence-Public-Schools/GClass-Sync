@@ -1165,6 +1165,13 @@ Function New-_GSCourseInvitation
                     Start-Sleep -Seconds 1
                     Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -FallBack $FallBack -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    #Write-Warning -Message ("Google Classroom {0} had changed state" -f $CourseId)
+                    Write-Warning -Message ("Couldn't to add {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     #Invoke-HTTP429
