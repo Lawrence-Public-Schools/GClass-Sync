@@ -1142,7 +1142,7 @@ Function New-_GSCourseInvitation
                     #Write-Warning -Message "Google Classroom $($CourseId) had changed state"
                     Write-Warning -Message ("Failed to add {0} As {1} As {2}" -f $UserId, $Role, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
-                    If ($null -cne $Fallback)
+                    If (-Not ([String]::IsNullOrEmpty($FallBack)))
                     {
                         Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $FallBack -FallBack $null -Verbose
                     }
