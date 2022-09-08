@@ -1265,7 +1265,7 @@ Function Get-_GSCourseInvitationByUser
         $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
         try
         {
-            $r += Get-GSCourseInvitation -UserId $UserId -ErrorAction Stop
+            $r += Get-GSCourseInvitation -UserId $UserId -User $UserId -ErrorAction Stop
         }
         Catch [System.Management.Automation.MethodInvocationException]
         {
