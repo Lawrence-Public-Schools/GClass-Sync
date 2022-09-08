@@ -1085,7 +1085,7 @@ Function New-_GSCourseInvitation
         $CourseId,
         [parameter(Mandatory = $true,ValueFromPipeline = $true,ValueFromPipelineByPropertyName = $true)]
         [Alias('PrimaryEmail','Email','Mail')]
-        [String[]]
+        [String]
         $UserId,
         [parameter(Mandatory = $false)]
         [ValidateSet('STUDENT','TEACHER','OWNER')]
