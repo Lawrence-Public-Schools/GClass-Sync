@@ -1870,7 +1870,7 @@ Function Add-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
                 {
-                    Write-Warning -Message ("This Teacher: {1} is already in Course: {1}" -f $Teacher, $CourseId)
+                    Write-Warning -Message ("This Teacher: {0} is already in Course: {1}" -f $Teacher, $CourseId)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
