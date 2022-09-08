@@ -77,7 +77,6 @@ Function invite_class_student()
         $CloseSection = "ERROR AT CLOSING POWERSCHOOL CLASSROOM"
         $ClassLink = Import-ClassLink
         $ClassLink_G = $ClassLink | Group-Object -Property sourcedId -AsHashTable
-        $FakeTeacher = "test.staff@$($Default_Domain)"
     }
     PROCESS
     {
@@ -238,7 +237,7 @@ Function invite_class_student()
             {
                 Write-Warning "There are incoming Teachers for $($ClassId) as Students, converting to Teacher invites: $($GCR_Teachers.EmailAddress -join ",")"
                 $GCR_Invitations_Good | Where-Object UserId -IN $GCR_Teachers.Id | Remove-_GSCourseInvitation -User $Teacher | Out-Null
-                $GCR_Invitations_Good | Where-Object UserId -IN $GCR_Teachers.Id | New-_GSCourseInvitation -CourseId $ClassId -Role TEACHER -User $Teacher -FallBack $FakeTeacher | Out-Null
+                $GCR_Invitations_Good | Where-Object UserId -IN $GCR_Teachers.Id | New-_GSCourseInvitation -CourseId $ClassId -Role TEACHER -User $Teacher | Out-Null
             }
         }
 
@@ -348,7 +347,7 @@ Function invite_class_student()
             }
 
             $NewInvites = @()
-            $NewInvites += $CP_Add | New-_GSCourseInvitation -CourseId $ClassId -Role STUDENT -User $Teacher -FallBack $FakeTeacher
+            $NewInvites += $CP_Add | New-_GSCourseInvitation -CourseId $ClassId -Role STUDENT -User $Teacher
             If ($NewInvites.Count -gt 0)
             {
                 $r += $OR_Students | Where-Object -Property Id -In -Value $NewInvites.UserId | Select-Object -ExpandProperty EmailAddress
