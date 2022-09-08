@@ -384,7 +384,7 @@ Function update_per_class()
         }
         ElseIf (($FakerIn -eq $true) -and ($OldOwner -ne $FakeTeacher) -and ($FakeProfile.Id -CNE $Course.OwnerId))
         {
-            Remove-_GSCourseParticipant -CourseId $ClassId -Teacher $FakeTeacher -User $OldOwner -Confirm:$false | Out-Null
+            Remove-_GSCourseTeacher -CourseId $ClassId -Teacher $FakeTeacher -User $OldOwner -Confirm:$false | Out-Null
             $FakerIn = $false
         }
         $TeacherProfile = @()
