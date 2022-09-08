@@ -12,7 +12,7 @@ Start-Transcript -path $TLOG
 $ErrorActionPreference = "Stop"
 #$ErrorActionPreference = "Inquire"
 
-Function Dead-classes
+Function Find-classes
 {
     [CmdletBinding()]
     Param
@@ -46,7 +46,7 @@ Function Dead-classes
     }
 }
 
-Function Break-classes
+Function Disable-classes
 {
     [CmdletBinding()]
     Param
@@ -97,6 +97,6 @@ Function Break-classes
         $NeedUpdate.sourcedId | Update-ClassLink -SkipCache $false -Domain $(Show-PSGSuiteConfig).Domain -Verbose
     }
 }
-$r = Dead-classes -WorkFolder $WorkFolder
-$r = Break-classes -WorkFolder $WorkFolder
+$r = Find-classes -WorkFolder $WorkFolder
+$r = Disable-classes -WorkFolder $WorkFolder
 
