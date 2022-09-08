@@ -35,7 +35,7 @@ Function remove_invitation
         {
             Write-Warning "Failled to get Course Status on $($Invitation.CourseId)"
             $Count_Counter += 1
-            Return $Invitation
+            Return
         }
         Write-Progress -Activity "Removing Broken Google Classroom invitations" -Status "Invite $($Invite_Counter + 1) of $($Invite_Count): $($c.Name)" -Id 0 -PercentComplete (($Invite_Counter * 100) /$Invite_Count)
         $Invite_Counter += 1
