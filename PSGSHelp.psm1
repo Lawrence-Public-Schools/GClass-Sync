@@ -1096,7 +1096,7 @@ Function New-_GSCourseInvitation
         $User,
         [parameter(Mandatory = $false)]
         [String]
-        $FallBack = "me"
+        $FallBack = $null
     )
     BEGIN
     {
@@ -1144,6 +1144,7 @@ Function New-_GSCourseInvitation
                     Write-Verbose -Message $Exc.Exception.InnerException
                     If (-Not ([String]::IsNullOrEmpty($FallBack)))
                     {
+                        Add-_GSCourseTeacher -CourseId $CourseId -Teacher $FallBack -Verbose | Out-Null
                         Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $FallBack -FallBack $null -Verbose
                     }
                     Return
