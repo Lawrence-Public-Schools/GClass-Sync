@@ -1252,7 +1252,7 @@ Function Get-_GSCourseInvitationByUser
     Param
     (
         [parameter(Mandatory = $true)]
-        [String[]]
+        [String]
         $UserId,
         [parameter(Mandatory = $false)]
         [ValidateSet('STUDENT','TEACHER','OWNER')]
