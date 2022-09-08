@@ -5,10 +5,10 @@ $PSGSHelp_Source = @"
 using System;
 using System.Management.Automation;
 using System.Collections.Generic;
- 
+
 namespace PSGSHelp_FastSearch
 {
- 
+
     public static class Search
     {
         public static List<Object> FindAll(PSObject[] collection, string column, string data)
@@ -18,7 +18,7 @@ namespace PSGSHelp_FastSearch
             {
                 if (item.Properties[column].Value.ToString() == data) { results.Add(item); }
             }
- 
+
             return results;
         }
 
@@ -28,7 +28,7 @@ namespace PSGSHelp_FastSearch
             {
                 if (item.Properties[column].Value.ToString() == data) { return item; }
             }
- 
+
             return null;
         }
 
@@ -38,7 +38,7 @@ namespace PSGSHelp_FastSearch
             {
                 if (item.Properties[column].Value.ToString().ToLower() == data.ToLower()) { return item; }
             }
- 
+
             return null;
         }
     }
@@ -47,7 +47,7 @@ namespace PSGSHelp_FastSearch
 
 Add-Type -ReferencedAssemblies $Assem -TypeDefinition $PSGSHelp_Source -Language CSharp
 
-Function HTTP429-TooManyRequests
+Function Invoke-HTTP429-TMRS
 {
 
     [OutputType('Void')]
@@ -132,7 +132,7 @@ Function Export-_GSClassroomUserProfile
     [OutputType('Void')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory=$true)]
         [Object]
         [AllowNull()]
@@ -145,7 +145,7 @@ Function Export-_GSClassroomUserProfile
         [String]
         $Path = ".\"
     )
-    If ($InputObject -eq $null)
+    If ($null -ceq $InputObject)
     {
         Return
     }
@@ -226,12 +226,12 @@ Function Import-_GSClassroomUserProfile_Bad
     }
 }
 
-Function Export-_GSClassroomUserProfile_Bad
+Function Export-_GSClassroomUserProfile_BadL
 {
     [OutputType('Void')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory=$true)]
         [PSObject[]]$InputObject,
         [Parameter(Mandatory=$true)]
@@ -259,7 +259,7 @@ Function Get-_GSClassroomUserProfile
     [OutputType('Google.Apis.Classroom.v1.Data.UserProfile')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
         [String]$UserId,
@@ -291,7 +291,7 @@ Function Get-_GSClassroomUserProfile
         $Cache_Changed = $false
         $Cache_Failed = @()
         $Cache_Failed_Changed = $false
-        
+
         If ($Cache_GSClassroomUserProfile.Count -gt 0)
         {
             $Cache_Writeback = $false
@@ -303,7 +303,7 @@ Function Get-_GSClassroomUserProfile
         }
         If ($StoreBad -eq $true)
         {
-            $Cache_Failed += Import-_GSClassroomUserProfile_Bad -Domain $Cache_Domain -Path $Cache_Path 
+            $Cache_Failed += Import-_GSClassroomUserProfile_Bad -Domain $Cache_Domain -Path $Cache_Path
         }
     }
     PROCESS
@@ -312,7 +312,7 @@ Function Get-_GSClassroomUserProfile
         If ($UserId -in $Cache_Failed)
         {
         }
-        ElseIf ($Cache_ClassroomUserProfile -eq $null -or $Cache_ClassroomUserProfile.Count -eq 0)
+        ElseIf ($null -ceq $Cache_ClassroomUserProfile -or $Cache_ClassroomUserProfile.Count -eq 0)
         {
         }
         ElseIf ($SkipCache -eq $false)
@@ -334,7 +334,7 @@ Function Get-_GSClassroomUserProfile
                 $UserId = "$($UserId)@$($Cache_Domain)"
                 $r += [PSGSHelp_FastSearch.Search]::FindOneC($Cache_ClassroomUserProfile,"EmailAddress",$UserId) #$Cache_ClassroomUserProfile | Where-Object -Property EmailAddress -EQ -Value $UserId
             }
-            
+
             If ($r.Count -gt 1)
             {
                 Write-Warning -Message ("Found more this one profile for {0}: {1}" -f $UserId, ($r | ConvertTo-Json -Depth 2))
@@ -355,7 +355,7 @@ Function Get-_GSClassroomUserProfile
         Try
         {
             $r += Get-GSClassroomUserProfile -UserId $UserId -ErrorAction Stop
-            
+
             If ($r.Count -gt 0)
             {
                 $Cache_ClassroomUserProfile = (($Cache_ClassroomUserProfile) | Where-Object -Property Id -NotIn $r.Id)
@@ -366,7 +366,7 @@ Function Get-_GSClassroomUserProfile
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -413,7 +413,7 @@ Function Get-_GSClassroomUserProfile
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -470,6 +470,7 @@ Function Clear-_GSCourseAlias
 
 Function Import-_GSCourseAlias
 {
+    [OutputType('System.Object[]')]
     [CmdletBinding()]
     Param
     (
@@ -511,7 +512,7 @@ Function Export-_GSCourseAlias
     [OutputType('Void')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory=$true)]
         [PSObject[]]$InputObject,
         [Parameter(Mandatory=$true)]
@@ -552,7 +553,7 @@ Function Clear-_GSCourse
 
 Function Import-_GSCourse
 {
-    [OutputType('Object[]')]
+    [OutputType('System.Object[]')]
     [CmdletBinding()]
     Param
     (
@@ -592,7 +593,7 @@ Function Export-_GSCourse
     [OutputType('Void')]
     [CmdletBinding()]
     Param
-    ( 
+    (
         [Parameter(Mandatory=$true)]
         [PSObject[]]$InputObject,
         [Parameter(Mandatory=$true)]
@@ -603,13 +604,12 @@ Function Export-_GSCourse
         [String]
         $Path = ".\"
     )
-    If ($InputObject -eq $null)
+    If ($null -ceq $InputObject)
     {
         Return
     }
     $Old = @()
     $New = @()
-    $OutputObject = @()
     $Cache_File = Join-Path -Path $Path -ChildPath "Cache_GSCourse_$($Domain).xml"
     $Old += Import-_GSCourse -Domain $Domain -Path $Path
     $New += ($InputObject)
@@ -652,12 +652,11 @@ Function Get-_GSCourse
     )
     BEGIN
     {
-        $Cache_AdminEMail = $(Show-PSGSuiteConfig).AdminEmail
         $Cache_Domain = $(Show-PSGSuiteConfig).Domain
         $Cache_Writeback = $true
         $Cache_Writeback_Alias = $true
         $Cache_Changed = $false
-       
+
         If ($Cache_GSCourse.Count -gt 0)
         {
             $Cache_Writeback = $false
@@ -666,7 +665,7 @@ Function Get-_GSCourse
         {
             $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
         }
-      
+
         If ($Cache_GSCourseAlias.Count -gt 0)
         {
             $Cache_Writeback_Alias = $false
@@ -721,7 +720,7 @@ Function Get-_GSCourse
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -744,7 +743,7 @@ Function Get-_GSCourse
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
-                
+
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
                     Write-Warning -Message "Google Classroom Service was unavailable"
@@ -768,7 +767,7 @@ Function Get-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -827,7 +826,7 @@ Function Update-_GSCourseState
         [Parameter(Mandatory=$true)]
         [ValidateSet('PROVISIONED','ACTIVE','ARCHIVED','DECLINED')]
         [String]
-        $CourseState = 'PROVISIONED',
+        $CourseState,
         [parameter(Mandatory = $false)]
         [Bool]
         $BypassCache = $false,
@@ -844,12 +843,11 @@ Function Update-_GSCourseState
     )
     BEGIN
     {
-        $Cache_AdminEMail = $(Show-PSGSuiteConfig).AdminEmail
         $Cache_Domain = $(Show-PSGSuiteConfig).Domain
         $Cache_Writeback = $true
         $Cache_Writeback_Alias = $true
         $Cache_Changed = $false
-       
+
         If ($Cache_GSCourse.Count -gt 0)
         {
             $Cache_Writeback = $false
@@ -858,7 +856,7 @@ Function Update-_GSCourseState
         {
             $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
         }
-      
+
         If ($Cache_GSCourseAlias.Count -gt 0)
         {
             $Cache_Writeback_Alias = $false
@@ -898,7 +896,7 @@ Function Update-_GSCourseState
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -921,7 +919,7 @@ Function Update-_GSCourseState
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return Get-_GSCourse -Id $Id -BypassCache $false -SkipCache $SkipCache -CacheOnly $true -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
-                
+
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
                 {
                     Write-Warning -Message "Google Classroom Service was unavailable"
@@ -945,7 +943,7 @@ Function Update-_GSCourseState
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1022,7 +1020,7 @@ Function Get-_GSCourseParticipant
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1061,7 +1059,7 @@ Function Get-_GSCourseParticipant
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1117,7 +1115,7 @@ Function New-_GSCourseInvitation
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1162,13 +1160,13 @@ Function New-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    #HTTP429-TooManyRequests
+                    #Invoke-HTTP429-TMRS
                     $Limited429 = $true
                     Start-Sleep -Seconds 1
                     Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
-                
+
                 Throw $Exc.Exception.InnerException
             }
         }
@@ -1203,7 +1201,7 @@ Function Get-_GSCourseInvitationByCourse
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1226,10 +1224,27 @@ Function Get-_GSCourseInvitationByCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Get-_GSCourseInvitationByCourse -CourseId $CourseId -Role $Role -Verbose
                 }
                 Write-Warning $HttpStatusCode
+
+                Throw $Exc.Exception.InnerException
+            }
+        }
+        If ($r.Count -eq 0)
+        {
+            Return
+        }
+        $f = @()
+        $f += $r | Where-Object -Property Role -In -Value $Role
+        If ($f.Count -eq 0)
+        {
+            Return
+        }
+        Return $f
+    }
+}
 
 Function Get-_GSCourseInvitationByUser
 {
@@ -1255,7 +1270,7 @@ Function Get-_GSCourseInvitationByUser
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1278,11 +1293,11 @@ Function Get-_GSCourseInvitationByUser
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Get-_GSCourseInvitationByUser -UserId $UserId -Verbose
                 }
                 Write-Warning $HttpStatusCode
-                
+
                 Throw $Exc.Exception.InnerException
             }
         }
@@ -1324,7 +1339,7 @@ Function Confirm-_GSCourseInvitation
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1369,7 +1384,7 @@ Function Confirm-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1429,7 +1444,7 @@ Function New-_GSCourse
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1490,7 +1505,7 @@ Function New-_GSCourse
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1501,7 +1516,7 @@ Function New-_GSCourse
         If ($r.Count -ge 1)
         {
             Return $r
-        } 
+        }
     }
 }
 
@@ -1521,7 +1536,7 @@ function Remove-_GSCourseInvitation
     PROCESS
     {
         $r = @()
-        If ($Id -eq $null)
+        If ($null -ceq $Id)
         {
             Write-Error "No invites to remove"
             Return
@@ -1534,7 +1549,7 @@ function Remove-_GSCourseInvitation
         Catch [System.Management.Automation.MethodInvocationException]
         {
             $Exc = $_
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1573,7 +1588,7 @@ function Remove-_GSCourseInvitation
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1618,7 +1633,7 @@ Function Remove-_GSCourseStudent
         {
             $Exc = $_
             #Write-Host $Exc.Exception
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1664,7 +1679,7 @@ Function Remove-_GSCourseStudent
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1709,7 +1724,7 @@ Function Remove-_GSCourseTeacher
         {
             $Exc = $_
             #Write-Host $Exc.Exception
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1755,7 +1770,7 @@ Function Remove-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
                 Write-Warning $HttpStatusCode
@@ -1769,6 +1784,7 @@ Function Remove-_GSCourseTeacher
         }
     }
 }
+
 Function Add-_GSCourseTeacher
 {
     Param
@@ -1795,7 +1811,7 @@ Function Add-_GSCourseTeacher
         {
             $Exc = $_
             #Write-Host $Exc.Exception
-            If ($Exc.Exception.InnerException -eq $null)
+            If ($null -ceq $Exc.Exception.InnerException)
             {
                 Throw $Exc.Exception
             }
@@ -1853,7 +1869,7 @@ Function Add-_GSCourseTeacher
                 }
                 If ($HttpStatusCode -eq 429)
                 {
-                    HTTP429-TooManyRequests
+                    Invoke-HTTP429-TMRS
                     Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 Write-Warning $HttpStatusCode
