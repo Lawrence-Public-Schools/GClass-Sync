@@ -149,7 +149,7 @@ Function make_missing_classes
                 $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
             }
         }
-        
+
         If ($null -eq $Teacher) #Still no aide? look for a plain admin
         {
             $Lookup_E = @()
