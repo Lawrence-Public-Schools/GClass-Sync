@@ -1093,10 +1093,7 @@ Function New-_GSCourseInvitation
         $Role = 'STUDENT',
         [parameter(Mandatory = $true,ValueFromPipelineByPropertyName = $true)]
         [String]
-        $User,
-        [parameter(Mandatory = $false)]
-        [String]
-        $FallBack = $null
+        $User
     )
     BEGIN
     {
@@ -1108,10 +1105,6 @@ Function New-_GSCourseInvitation
         If ($true -eq $Limited429)
         {
             Write-Verbose -Message "We hit a HTTP 429 limit, returning blanks"
-            Return
-        }
-        If ([String]::IsNullOrEmpty($User))
-        {
             Return
         }
         $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
@@ -1140,13 +1133,8 @@ Function New-_GSCourseInvitation
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
                 {
                     #Write-Warning -Message "Google Classroom $($CourseId) had changed state"
-                    Write-Warning -Message ("Failed to add {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Warning -Message ("Couldn't add disabled {0} As {1} As {2}" -f $UserId, $Role, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
-                    If (-Not ([String]::IsNullOrEmpty($FallBack)))
-                    {
-                        Add-_GSCourseTeacher -CourseId $CourseId -Teacher $FallBack -Verbose | Out-Null
-                        Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $FallBack -FallBack $null -Verbose
-                    }
                     Return
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
@@ -1154,7 +1142,7 @@ Function New-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was unavailable"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 5
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -FallBack $FallBack -Verbose
+                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Forbidden)
                 {
@@ -1168,12 +1156,12 @@ Function New-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -FallBack $FallBack -Verbose
+                    Return New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
                 {
                     #Write-Warning -Message ("Google Classroom {0} had changed state" -f $CourseId)
-                    Write-Warning -Message ("Couldn't to add {0} As {1} As {2}" -f $UserId, $Role, $User)
+                    Write-Warning -Message ("Not allowed to add {0} As {1} As {2}" -f $UserId, $Role, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
