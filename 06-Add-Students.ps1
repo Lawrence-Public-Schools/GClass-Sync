@@ -78,7 +78,6 @@ Function invite_class_student()
         $ClassLink = Import-ClassLink
         $ClassLink_G = $ClassLink | Group-Object -Property sourcedId -AsHashTable
         $FakeTeacher = "test.staff@$($Default_Domain)"
-        $FakeTeacher = "me"
     }
     PROCESS
     {
