@@ -70,9 +70,9 @@ Function eat_invitation
         $b += $g | Where-Object -Property Id -NotIn $r.Id
         If ($b.Count -gt 0)
         {
-            Write-Host -Object "Found $($b.Count) broken invites"
+            #Write-Host -Object "Found $($b.Count) broken invites"
             #$r | ConvertTo-Json | Write-Warning
-            Return $b
+            #Return $b
         }
     }
     END
