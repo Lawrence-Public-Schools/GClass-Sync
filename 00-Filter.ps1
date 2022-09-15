@@ -295,7 +295,7 @@ Function main_fixup_classes
         }
         Else
         {
-            Read-ORclasses -FolderPath $InputFolder | Where-Object -Property schoolSourcedId -EQ -Value $OrgFilter | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+            Read-ORclasses -FolderPath $InputFolder | Where-Object -Property schoolSourcedId -EQ -Value $OrgFilter | process_fixup_classes -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
         }
         Write-Host -Object "Fixup classes: Done"
     }
@@ -346,7 +346,7 @@ Function main
         }
         main_fixup_users -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
         main_fixup_enrollments -InputFolder $InputFolder -OutputFolder $OutputFolder
-        main_fixup_classes -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
+        main_fixup_classes -OutputFolder $OutputFolder -OrgFilter $OrgFilter
         main_split_by_org -InputFolder $OutputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
     }
 }
