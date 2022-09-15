@@ -11,8 +11,14 @@ Get-Module -Name OneRoster| Remove-Module; Import-Module .\OneRoster.psm1
 $TLOG = ((".\Logs\" + (Get-Date -Format u) +"-Filter.log").Replace(" ", "-")).Replace(":", "-")
 Start-Transcript -path $TLOG
 
-$ErrorActionPreference = "Stop"
-#$ErrorActionPreference = "Inquire"
+If (Test-Path -Path variable:global:psISE)
+{
+    $ErrorActionPreference = "Inquire"
+}
+Else
+{
+    $ErrorActionPreference = "Stop"
+}
 
 Function main_split_by_org
 {
@@ -41,7 +47,7 @@ Function main_split_by_org
         Write-Host -Object "Spliting Courses"
         $Orgs | Split-ORCourses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLOutput $true -ErrorAction Continue
         Write-Host -Object "Spliting Classes"
-        $Orgs | Split-ORClasses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $true -XMLOutput $true
+        $Orgs | Split-ORClasses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $false -XMLOutput $true
         Write-Host -Object "Spliting Enrollments"
         $Orgs | Split-OREnrollments -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $true -XMLOutput $true
         Write-Host -Object "Spliting Users"
