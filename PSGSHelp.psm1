@@ -226,7 +226,7 @@ Function Import-_GSClassroomUserProfile_Bad
     }
 }
 
-Function Export-_GSClassroomUserProfile_BadL
+Function Export-_GSClassroomUserProfile_Bad
 {
     [OutputType('Void')]
     [CmdletBinding()]
