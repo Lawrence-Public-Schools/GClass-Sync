@@ -47,7 +47,7 @@ Function main_split_by_org
         Write-Host -Object "Spliting Courses"
         $Orgs | Split-ORCourses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLOutput $true -ErrorAction Continue
         Write-Host -Object "Spliting Classes"
-        $Orgs | Split-ORClasses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $false -XMLOutput $true
+        $Orgs | Split-ORClasses -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $true -XMLOutput $true
         Write-Host -Object "Spliting Enrollments"
         $Orgs | Split-OREnrollments -SourceFolderPath $InputFolder -DestFolderPath $OutputFolder -XMLInput $true -XMLOutput $true
         Write-Host -Object "Spliting Users"
@@ -163,10 +163,13 @@ Function process_fixup_enrollment
         [OR_enrollment]
         $enrollment_E,
         [String]
+        $FolderPath_I,
+        [String]
         $FolderPath_O
     )
     BEGIN
     {
+        Write-Verbose $FolderPath_I
         Write-Progress -Activity "Fixing up enrollments" -Status "Now Loading Users" -Id 0
         $users_I = Read-ORUsers -FolderPath $FolderPath_O -LoadXML $true
         Write-Progress -Activity "Fixing up enrollments" -Status "Building User list" -Id 0
@@ -217,17 +220,20 @@ Function process_fixup_classes
         [OR_class]
         $Class_E,
         [String]
+        $FolderPath_I,
+        [String]
         $FolderPath_O
     )
     BEGIN
     {
+        Write-Verbose $FolderPath_I
         Write-Progress -Activity "Fixing up classes" -Status "Now Loading enrollments" -Id 0
         $enrollments_I = Read-ORenrollments -FolderPath $FolderPath_O
         Write-Progress -Activity "Fixing up classes" -Status "Loaded Classes and enrollments" -Id 0
         $enrollments_IP = $enrollments_I | Where-Object -Property primary -EQ -Value $true
         $enrollments_IS = $enrollments_I | Where-Object -Property role -EQ -Value "student"
         $enrollments_LP = $enrollments_IP.classSourcedId
-        $enrollments_LS = $enrollments_IS | Group-Object -Property classSourcedId -NoElement | Select-Object -ExpandProperty Name
+        $enrollments_LS = $enrollments_IS.classSourcedId | Sort-Object | Get-Unique
         $Org_I = Read-OROrgs -FolderPath $FolderPath_O
     }
     PROCESS
@@ -273,7 +279,7 @@ Function main_fixup_enrollments
         Write-Host -Object "Fixup enrollments: Loading"
         $BeginLayway = [TimeSpan]::FromDays(21)
         $EndLayway = [TimeSpan]::FromDays(-7)
-        Read-ORenrollments -FolderPath $InputFolder | Limit-OREnrollmentByDate -BeginLayway $BeginLayway -EndLayway $EndLayway | process_fixup_enrollment -FolderPath_O $OutputFolder | Export-Clixml -Path $enrollments_O_FP
+        Read-ORenrollments -FolderPath $InputFolder | Limit-OREnrollmentByDate -BeginLayway $BeginLayway -EndLayway $EndLayway | process_fixup_enrollment -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $enrollments_O_FP
         Write-Host -Object "Fixup enrollments: Done"
     }
 }
@@ -297,11 +303,11 @@ Function main_fixup_classes
         Write-Host -Object "Fixup classes: Loading"
         If ($OrgFilter -EQ "")
         {
-            Read-ORclasses -FolderPath $InputFolder | process_fixup_classes -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+            Read-ORclasses -FolderPath $InputFolder | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
         }
         Else
         {
-            Read-ORclasses -FolderPath $InputFolder | Where-Object -Property schoolSourcedId -EQ -Value $OrgFilter | process_fixup_classes -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
+            Read-ORclasses -FolderPath $InputFolder | Where-Object -Property schoolSourcedId -EQ -Value $OrgFilter | process_fixup_classes -FolderPath_I $InputFolder -FolderPath_O $OutputFolder | Export-Clixml -Path $classes_O_FP
         }
         Write-Host -Object "Fixup classes: Done"
     }
@@ -352,7 +358,7 @@ Function main
         }
         main_fixup_users -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
         main_fixup_enrollments -InputFolder $InputFolder -OutputFolder $OutputFolder
-        main_fixup_classes -OutputFolder $OutputFolder -OrgFilter $OrgFilter
+        main_fixup_classes -InputFolder $InputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
         main_split_by_org -InputFolder $OutputFolder -OutputFolder $OutputFolder -OrgFilter $OrgFilter
     }
 }
