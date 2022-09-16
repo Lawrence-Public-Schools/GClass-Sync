@@ -49,7 +49,6 @@ Add-Type -ReferencedAssemblies $Assem -TypeDefinition $PSGSHelp_Source -Language
 
 Function Invoke-HTTP429
 {
-
     [OutputType('Void')]
     [CmdletBinding()]
     Param
@@ -63,6 +62,70 @@ Function Invoke-HTTP429
         #Write-Warning -Message "Google Classroom Service is limited, holding off"
         Write-Warning -Message ("Waiting for {0} seconds" -f ($RetryMS/1000))
         Start-Sleep -Milliseconds $RetryMS
+    }
+}
+
+Function Invoke-ChangeDriveOwner
+{
+    [OutputType('Void')]
+    [CmdletBinding()]
+    Param
+    (
+        [parameter(Mandatory = $true)]
+        [String]
+        $CourseId,
+        [parameter(Mandatory = $true)]
+        [String]
+        $OldOwner,
+        [parameter(Mandatory = $true)]
+        [String]
+        $NewOwner,
+    )
+    PROCESS
+    {
+        $Courses = @()
+        $Course = $null
+        $FileIds = @()
+        $FileId = $null
+        $Files = @()
+        $File = $null
+
+        Write-Warning -Message ("Manually changing Google Drive owner of {0} from {1} to {2}" -f $CourseId, $OldOwner, $NewOwner)
+
+        $Courses += Get-_GSCourse -Id $CourseId -ErrorAction Continue
+        If ($Courses.Count -gt 0)
+        {
+            $Course = $Courses | Select-Object -First 1
+        }
+        {
+            Return
+        }
+
+        $FileIds += $Course | Select-Object -ExpandProperty TeacherFolder | Select-Object -ExpandProperty Id
+        If ($FileIds.Count -gt 0)
+        {
+            $FileId = $FileIds | Select-Object -First 1
+        }
+        {
+            Return
+        }
+
+        $Files += Get-GSDriveFile -FileId $FileId -User $OldOwner  -ErrorAction Continue
+        If ($Files.Count -gt 0)
+        {
+            $File = $Files | Select-Object -First 1
+        }
+        {
+            Return
+        }
+
+        If ($File.OwnedByMe -eq $false)
+        {
+            Return
+        }
+
+        $EmailMessage = "Sorry, but the GClass-Sync program needs to manually change ownership of this Google Classroom's folder \"{0}\" for \"{1}\" into your hand" -f $File.Name, $Course.Name
+        Add-GSDriveFilePermissions -FileId $File.Id -Role Owner -Type User -User $File.User -EmailAddress $NewOwner -EmailMessage $EmailMessage -SendNotificationEmail:$true -TransferOwnership -UseDomainAdminAccess -Confirm:$false-ErrorAction Stop
     }
 }
 
@@ -1960,6 +2023,12 @@ Function Remove-_GSCourseTeacher
                     Write-Warning -Message ("Could not remove the Google Drive owner: {0} from Course: {1} With User: {2}" -f $Teacher, $CourseId, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
+                    $Status = @()
+                    $Status += Invoke-ChangeDriveOwner -CourseId $CourseId -OldOwner $Teacher -NewOwner $User
+                    If ($Status.Count -eq 0)
+                    {
+                        Return
+                    }
                     Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
