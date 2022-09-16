@@ -433,12 +433,12 @@ Function update_per_class()
                     $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
                 }
                 $Course = $null
-                $Course = Update-GSCourse -Id $ClassId -OwnerId $Teacher
+                $Course = Update-_GSCourseOwner -Id $ClassId -OwnerId $Teacher
                 $bState = $true
                 If ($null -ne $Course)
                 {
                     $Owner = $Teacher
-                    If (($FakerIn -eq $true) -and ($OldOwner -ne $FakeTeacher) -and ($FakeProfile.Id -CEQ $Course.OwnerId))
+                    If (($FakerIn -eq $true) -and ($OldOwner -ne $FakeTeacher) -and ($FakeProfile.Id -CNE $Course.OwnerId))
                     {
                         Remove-_GSCourseTeacher -CourseId $ClassId -Teacher $FakeTeacher -User $Owner -Verbose | Out-Null
                     }
