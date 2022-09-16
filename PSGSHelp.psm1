@@ -79,7 +79,7 @@ Function Invoke-ChangeDriveOwner
         $OldOwner,
         [parameter(Mandatory = $true)]
         [String]
-        $NewOwner,
+        $NewOwner
     )
     PROCESS
     {
@@ -97,6 +97,7 @@ Function Invoke-ChangeDriveOwner
         {
             $Course = $Courses | Select-Object -First 1
         }
+        Else
         {
             Return
         }
@@ -106,6 +107,7 @@ Function Invoke-ChangeDriveOwner
         {
             $FileId = $FileIds | Select-Object -First 1
         }
+        Else
         {
             Return
         }
@@ -115,6 +117,7 @@ Function Invoke-ChangeDriveOwner
         {
             $File = $Files | Select-Object -First 1
         }
+        Else
         {
             Return
         }
@@ -124,8 +127,8 @@ Function Invoke-ChangeDriveOwner
             Return
         }
 
-        $EmailMessage = "Sorry, but the GClass-Sync program needs to manually change ownership of this Google Classroom's folder \"{0}\" for \"{1}\" into your hand" -f $File.Name, $Course.Name
-        Add-GSDriveFilePermissions -FileId $File.Id -Role Owner -Type User -User $File.User -EmailAddress $NewOwner -EmailMessage $EmailMessage -SendNotificationEmail:$true -TransferOwnership -UseDomainAdminAccess -Confirm:$false-ErrorAction Stop
+        $EmailMessage = "Sorry, but the GClass-Sync program needs to manually change ownership of this Google Drive folder {0} for Google Classroom {1} into your hand" -f $File.Name, $Course.Name
+        Add-GSDrivePermission -FileId $File.Id -Role Owner -Type User -User $File.User -EmailAddress $NewOwner -EmailMessage $EmailMessage -SendNotificationEmail:$true -TransferOwnership -UseDomainAdminAccess -Confirm:$false-ErrorAction Stop
     }
 }
 
