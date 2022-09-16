@@ -994,6 +994,186 @@ Function Update-_GSCourseState
     }
 }
 
+
+Function Update-_GSCourseOwner
+{
+    [OutputType('Google.Apis.Classroom.v1.Data.Course')]
+    Param
+    (
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $Id,
+        [Parameter(Mandatory=$true)]
+        [String]
+        $OwnerId,
+        [parameter(Mandatory = $false)]
+        [Bool]
+        $BypassCache = $false,
+        [parameter(Mandatory = $false)]
+        [Bool]
+        $SkipCache = $false,
+        [parameter(Mandatory = $false)]
+        [Object[]]
+        [AllowNull()]
+        $Cache_GSCourse = @(),
+        [parameter(Mandatory = $false)]
+        #[System.Collections.Hashtable]
+        $Cache_GSCourseAlias = @()
+    )
+    BEGIN
+    {
+        $Cache_Domain = $(Show-PSGSuiteConfig).Domain
+        $Cache_Writeback = $true
+        $Cache_Writeback_Alias = $true
+        $Cache_Changed = $false
+
+        If ($Cache_GSCourse.Count -gt 0)
+        {
+            $Cache_Writeback = $false
+        }
+        ElseIf ($BypassCache -eq $false -and $Allow_Course_Cache -eq $true)
+        {
+            $Cache_GSCourse += Import-_GSCourse -Domain $Cache_Domain
+        }
+
+        If ($Cache_GSCourseAlias.Count -gt 0)
+        {
+            $Cache_Writeback_Alias = $false
+        }
+        ElseIf ($BypassCache -eq $false -and $Allow_Course_Cache -eq $true)
+        {
+            $Cache_GSCourseAlias += Import-_GSCourseAlias -Domain $Cache_Domain
+        }
+    }
+    PROCESS
+    {
+        $r = @()
+        $AId = $null
+        $RId = $null
+        If ($SkipCache -eq $false -and $Allow_Course_Cache -eq $true)
+        {
+            If ($Id -like "d:*" -or $Id -like "p:*")
+            {
+                $AId = $Id
+                $RId = $null
+                If ($Cache_GSCourseAlias.Count -ge 0)
+                {
+                    $RId = $Cache_GSCourseAlias | Where-Object -Property CourseAlias -EQ -Value $AId | Select-Object -ExpandProperty CourseId
+                }
+                If ($null -ne $RId)
+                {
+                    $Id = $RId
+                }
+            }
+        }
+        $HttpStatusCode = [System.Net.HttpStatusCode]::Unused
+        Try
+        {
+            $r += Update-GSCourse -Id $Id -OwnerId $OwnerId -ErrorAction Stop
+            $Cache_Changed = $true
+        }
+        Catch [System.Management.Automation.MethodInvocationException]
+        {
+            $Exc = $_
+            If ($null -ceq $Exc.Exception.InnerException)
+            {
+                Throw $Exc.Exception
+            }
+            Else
+            {
+                If ($null -ne $Exc.Exception.InnerException.HttpStatusCode)
+                {
+                    $HttpStatusCode = $Exc.Exception.InnerException.HttpStatusCode
+                }
+
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::NotFound)
+                {
+                    #Write-Warning -Message ("Could not find Course: {0}", $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return $null
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unauthorized)
+                {
+                    Write-Warning -Message ("Can not access Course: {0}" -f $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return Get-_GSCourse -Id $Id -BypassCache $false -SkipCache $SkipCache -CacheOnly $true -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
+
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::ServiceUnavailable)
+                {
+                    Write-Warning -Message "Google Classroom Service was unavailable"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
+                {
+                    Write-Warning -Message "Google Classroom got an internal server error"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Unused)
+                {
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
+                If ($HttpStatusCode -eq 429)
+                {
+                    Invoke-HTTP429
+                    Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
+                Write-Warning $HttpStatusCode
+
+                Throw $Exc.Exception.InnerException
+            }
+        }
+        If ($r.Count -eq 0)
+        {
+            Return $null
+        }
+        If ($r.Count -eq 1 -and $null -eq $RId)
+        {
+            If ($Id -like "d:*" -or $Id -like "p:*" -and $Allow_Course_Cache -eq $true)
+            {
+                $Cache_GSCourseAlias_Old = $Cache_GSCourseAlias
+                $Cache_GSCourseAlias_New = @()
+                $Cache_GSCourseAlias_New += $Cache_GSCourseAlias_Old | Where-Object -Property CourseAlias -NotIn -Value $AId | Where-Object -Property CourseId -NotIn -Value $r.Id
+                $NAlias = [PSCustomObject]@{
+                    CourseAlias    = $Id
+                    CourseId       = $r.Id
+                                           }
+                $Cache_GSCourseAlias = @()
+                $Cache_GSCourseAlias += $NAlias
+                $Cache_GSCourseAlias += $Cache_GSCourseAlias_New
+            }
+        }
+        If ($Allow_Course_Cache -eq $true)
+        {
+            $Cache_GSCourse = $Cache_GSCourse | Where-Object -Property Id -NotIn -Value $r.Id
+            $Cache_GSCourse += $r
+        }
+        Return $r
+    }
+    END
+    {
+        If ($BypassCache -eq $false -and $Cache_Changed -eq $true -and $Allow_Course_Cache -eq $true)
+        {
+            If ($Cache_Writeback -eq $true)
+            {
+                Export-_GSCourse -InputObject $Cache_GSCourse -Domain $Cache_Domain
+            }
+            If ($Cache_Writeback_Alias -eq $true)
+            {
+                Export-_GSCourseAlias -InputObject $Cache_GSCourseAlias -Domain $Cache_Domain
+            }
+        }
+    }
+}
+
 Function Get-_GSCourseParticipant
 {
     [OutputType('Google.Apis.Classroom.v1.Data.Student')]
@@ -1780,7 +1960,7 @@ Function Remove-_GSCourseTeacher
                     Write-Warning -Message ("Could not remove the owner: {0} from Course: {1} With User: {2}" -f $Teacher, $CourseId, $User)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
-                    Return
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
