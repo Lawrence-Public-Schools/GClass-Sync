@@ -1775,6 +1775,13 @@ Function Remove-_GSCourseTeacher
                     Start-Sleep -Seconds 1
                     Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
+                {
+                    Write-Warning -Message ("Could not remove the owner: {0} from Course: {1} With User: {2}" -f $Teacher, $CourseId, $User)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
