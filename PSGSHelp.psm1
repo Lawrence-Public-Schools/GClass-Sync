@@ -128,7 +128,7 @@ Function Invoke-ChangeDriveOwner
         }
 
         $EmailMessage = "Sorry, but the GClass-Sync program needs to manually change ownership of this Google Drive folder {0} for Google Classroom {1} into your hand" -f $File.Name, $Course.Name
-        Add-GSDrivePermission -FileId $FileId -Role Owner -Type User -User $OldOwner -EmailAddress $NewOwner -EmailMessage $EmailMessage -SendNotificationEmail:$true -UseDomainAdminAccess -Confirm:$false -ErrorAction Continue -Verbose
+        Add-GSDrivePermission -FileId $File.Id -Role Owner -Type User -User $File.User -EmailAddress $NewOwner -EmailMessage $EmailMessage -SendNotificationEmail:$true -TransferOwnership -ErrorAction Continue -Verbose
     }
 }
 
