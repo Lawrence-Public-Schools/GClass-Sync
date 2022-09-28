@@ -477,6 +477,13 @@ Function Get-_GSClassroomUserProfile
                     Start-Sleep -Seconds 5
                     Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Return Get-_GSClassroomUserProfile -UserId $UserId -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_Path $Cache_Path -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $StoreBad -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -831,6 +838,13 @@ Function Get-_GSCourse
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Get-_GSCourse -Id $Id -BypassCache $BypassCache -SkipCache $SkipCache -CacheOnly $CacheOnly -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -1012,7 +1026,7 @@ Function Update-_GSCourseState
                     Write-Warning -Message ("The server encountered a temporary error and could not complete your request for Course: {0}", $Id)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 30
-                    Return Get-_GSCourse -Id $Id -BypassCache $false -SkipCache $SkipCache -CacheOnly $true -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                    Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
@@ -1194,6 +1208,13 @@ Function Update-_GSCourseOwner
                     Start-Sleep -Seconds 1
                     Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -1310,6 +1331,13 @@ Function Get-_GSCourseParticipant
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -1418,6 +1446,13 @@ Function New-_GSCourseInvitation
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return #New-_GSCourseInvitation -CourseId $CourseId -UserId $UserId -Role $Role -User $User -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     #Invoke-HTTP429
@@ -1481,6 +1516,13 @@ Function Get-_GSCourseInvitationByCourse
                     Write-Warning -Message ("Denied to to get {0} Invitations" -f $CourseId)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Get-_GSCourseInvitationByCourse -CourseId $CourseId -Role $Role -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
@@ -1550,6 +1592,13 @@ Function Get-_GSCourseInvitationByUser
                     Write-Warning -Message ("Denied to to get {0} Invitations" -f $CourseId)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Get-_GSCourseInvitationByUser -UserId $UserId -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
@@ -1640,6 +1689,13 @@ Function Confirm-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
+                    Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
@@ -1763,6 +1819,13 @@ Function New-_GSCourse
                     Start-Sleep -Seconds 1
                     Return Get-_GSCourse -Id $Id -BypassCache:$true -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return New-_GSCourse -Name $Name -OwnerId $OwnerId -FallBackId $FallBackId -Id $Id -Section $Section -Room $Room -CourseState $CourseState -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -1844,6 +1907,13 @@ function Remove-_GSCourseInvitation
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
+                    Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
                     Return Remove-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
@@ -1935,6 +2005,13 @@ Function Remove-_GSCourseStudent
                     Write-Warning -Message "Google Classroom Service was disconnected"
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Start-Sleep -Seconds 1
+                    Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
                     Return Remove-_GSCourseStudent -CourseId $CourseId -Student $Student -User $User -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
@@ -2041,6 +2118,13 @@ Function Remove-_GSCourseTeacher
                     }
                     Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Remove-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -User $User -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
@@ -2139,6 +2223,13 @@ Function Add-_GSCourseTeacher
                     Write-Warning -Message ("This Teacher: {0} is already in Course: {1}" -f $Teacher, $CourseId)
                     Write-Verbose -Message $Exc.Exception.InnerException
                     Return
+                }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Add-_GSCourseTeacher -CourseId $CourseId -Teacher $Teacher -Verbose
                 }
                 If ($HttpStatusCode -eq 429)
                 {
