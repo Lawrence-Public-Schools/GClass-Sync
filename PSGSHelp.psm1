@@ -1007,6 +1007,13 @@ Function Update-_GSCourseState
                     Start-Sleep -Seconds 1
                     Return Update-_GSCourseState -Id $Id -CourseState $CourseState -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadGateway)
+                {
+                    Write-Warning -Message ("The server encountered a temporary error and could not complete your request for Course: {0}", $Id)
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 30
+                    Return Get-_GSCourse -Id $Id -BypassCache $false -SkipCache $SkipCache -CacheOnly $true -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
