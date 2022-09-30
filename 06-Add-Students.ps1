@@ -390,76 +390,83 @@ Function add_students()
     (
         [Parameter(Mandatory = $true)]
         [String]$WorkFolder,
-        [String]$Filter = "*"
+        [Parameter(Mandatory = $true)]
+        [String]$ClassFilter
     )
-
-    If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
+    PROCESS
     {
-        Write-Host -Object "Switching to TEACHERS"
-        Switch-PSGSuiteConfig -ConfigName TEACHERS
-    }
-
-    $Cache_Domain = $(Show-PSGSuiteConfig).Domain
-    Write-Host -Object "Loading CourseAlias Cache"
-    $Cache_CourseAlias = Import-_GSCourseAlias -Domain $Cache_Domain
-    Write-Host -Object "Loading Course Cache"
-    $Cache_Course = Import-_GSCourse -Domain $Cache_Domain
-    Write-Host -Object "Loading Profile Cache for Students"
-    #$Cache_ClassroomUserProfile = @()
-    #$Cache_ClassroomUserProfile += Import-_GSClassroomUserProfile -Domain "students.$($Cache_Domain)"
-    $Cache_ClassroomUserProfile = Import-_GSClassroomUserProfile -Domain "students.$($Cache_Domain)"
-    #$Cache_ClassroomUserProfile += Import-_GSClassroomUserProfile -Domain $($Cache_Domain)
-    Write-Host -Object "Loading Users Cache"
-    $Users_I = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true
-    Write-Host -Object "Limit Users Cache to teachers, aide and admins"
-    $Users_T = $Users_I | Limit-ORUserByRole -role teacher,aide,administrator
-    Write-Host -Object "Limit Users Cache to students"
-    $Users_S = $Users_I | Limit-ORUserByRole -role student
-    $Invite_File = Join-Path -Path "." -ChildPath "TODO_Invite.xml"
-    $Orgs = Read-OROrgs -FolderPath $WorkFolder
-    $r = $Orgs | ForEach-Object {
-        $students_N = @()
-        If (Test-Path -Path $Invite_File -PathType Leaf)
+        If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
         {
-            $students_N += Import-Clixml -Path $Invite_File
+            Write-Host -Object "Switching to TEACHERS"
+            Switch-PSGSuiteConfig -ConfigName TEACHERS
         }
-        $ClassLink = Import-ClassLink
-        $GoodLink = $ClassLink | Where-Object CourseState -In ("ACTIVE", "PROVISIONED_")
-    }, {
-        $Org = $_
-        Write-Host -Object "Importing classes For $($Org.name)"
-        $classes_I = @()
-        $classes_I += Read-ORclasses -FolderPath $WorkFolder -Org $Org -LoadXML $true | Where-Object sourcedId -In $GoodLink.sourcedId | Where-Object sourcedId -CLike $Filter
-
-        If ($classes_I.Count -eq 0)
+        If ($ClassFilter -cne "*")
         {
-            Write-Host -Object "No classes to work on"
-            Return
+            Write-Warning ("Filtering Class to : {0}" -f $ClassFilter)
         }
 
-        $students_N_ = @()
-        $students_N_ += $classes_I | invite_class_student -WorkFolder $WorkFolder -Cache_CourseAlias $Cache_CourseAlias -Cache_Course $Cache_Course -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -Cache_Teachers $Users_T -Cache_Students $Users_S -Class_Count $classes_I.Count -Org $Org
-
-        If ($students_N_.count -gt 0)
-        {
-            Write-Host -Object "New invite for students was created"
-            $students_U = $students_N + ( $students_N_ | Sort-Object -Unique )
-            Write-Host -Object "Export students to confirm Invites"
-            Export-Clixml -InputObject $students_U -Path $Invite_File
-            $students_N = $students_U
-        }
-        Return $students_N_
-    }, {
-        If ($students_N.count -eq 0)
-        {
-            Write-Host -Object "No new invites for students was created"
+        $Cache_Domain = $(Show-PSGSuiteConfig).Domain
+        Write-Host -Object "Loading CourseAlias Cache"
+        $Cache_CourseAlias = Import-_GSCourseAlias -Domain $Cache_Domain
+        Write-Host -Object "Loading Course Cache"
+        $Cache_Course = Import-_GSCourse -Domain $Cache_Domain
+        Write-Host -Object "Loading Profile Cache for Students"
+        #$Cache_ClassroomUserProfile = @()
+        #$Cache_ClassroomUserProfile += Import-_GSClassroomUserProfile -Domain "students.$($Cache_Domain)"
+        $Cache_ClassroomUserProfile = Import-_GSClassroomUserProfile -Domain "students.$($Cache_Domain)"
+        #$Cache_ClassroomUserProfile += Import-_GSClassroomUserProfile -Domain $($Cache_Domain)
+        Write-Host -Object "Loading Users Cache"
+        $Users_I = Read-ORUsers -FolderPath $WorkFolder -LoadXML $true
+        Write-Host -Object "Limit Users Cache to teachers, aide and admins"
+        $Users_T = $Users_I | Limit-ORUserByRole -role teacher,aide,administrator
+        Write-Host -Object "Limit Users Cache to students"
+        $Users_S = $Users_I | Limit-ORUserByRole -role student
+        $Invite_File = Join-Path -Path "." -ChildPath "TODO_Invite.xml"
+        $Orgs = Read-OROrgs -FolderPath $WorkFolder
+        $r = $Orgs | ForEach-Object -Begin {
+            $students_N = @()
             If (Test-Path -Path $Invite_File -PathType Leaf)
             {
-                Remove-Item -Path $Invite_File
+                $students_N += Import-Clixml -Path $Invite_File
             }
-        }
+            $ClassLink = Import-ClassLink
+            $GoodLink = $ClassLink | Where-Object CourseState -In ("ACTIVE", "PROVISIONED_") | Where-Object sourcedId -CLike -Value $ClassFilter
+        } -Process {
+            $Org = $_
+            Write-Host -Object "Importing classes For $($Org.name)"
+            $classes_I = @()
+            $classes_I += Read-ORclasses -FolderPath $WorkFolder -Org $Org -LoadXML $true | Where-Object sourcedId -In $GoodLink.sourcedId
+
+            If ($classes_I.Count -eq 0)
+            {
+                Write-Host -Object "No classes to work on"
+                Return
+            }
+
+            $students_N_ = @()
+            $students_N_ += $classes_I | invite_class_student -WorkFolder $WorkFolder -Cache_CourseAlias $Cache_CourseAlias -Cache_Course $Cache_Course -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -Cache_Teachers $Users_T -Cache_Students $Users_S -Class_Count $classes_I.Count -Org $Org
+
+            If ($students_N_.count -gt 0)
+            {
+                Write-Host -Object "New invite for students was created"
+                $students_U = $students_N + ( $students_N_ | Sort-Object -Unique )
+                Write-Host -Object "Export students to confirm Invites"
+                Export-Clixml -InputObject $students_U -Path $Invite_File
+                $students_N = $students_U
+            }
+            Return $students_N_
+        } -End {
+            If ($students_N.count -eq 0)
+            {
+                Write-Host -Object "No new invites for students was created"
+                If (Test-Path -Path $Invite_File -PathType Leaf)
+                {
+                    Remove-Item -Path $Invite_File
+                }
+            }
+        } -Verbose
+        Return $r
     }
-    Return $r
 }
 
-$r = add_students -WorkFolder $WorkFolder -Filter $ClassFilter
+$r = add_students -WorkFolder $WorkFolder -ClassFilter $ClassFilter
