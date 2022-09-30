@@ -200,7 +200,7 @@ Function invite_class_student()
             $GCR_AllStudents = $GCR_Participants.UserId | Get-_GSClassroomUserProfile -BypassCache $true -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $true -CacheOnly $true | Where-Object -FilterScript {$null -ne $_}
             $GCR_Students += $GCR_AllStudents | Where-Object EmailAddress -NotLike $Domain_Filter | Where-Object -Property EmailAddress -NE -Value ""
             $GCR_Locals += $GCR_AllStudents | Where-Object EmailAddress -Like $Domain_Filter
-            $Outsiders = $GCR_AllStudents.Profile | Where-Object -Property EmailAddress -EQ -Value ""
+            $Outsiders += $GCR_AllStudents.Profile | Where-Object -Property EmailAddress -EQ -Value ""
         }
 
         If ($GCR_Locals.Count -gt 0)
