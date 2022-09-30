@@ -1941,7 +1941,7 @@ Function Remove-_GSCourseStudent
         [ValidateNotNullOrEmpty()]
         [String]
         $CourseId,
-        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
         [Alias('PrimaryEmail','Email','Mail', 'Id')]
         [String]
@@ -2150,7 +2150,7 @@ Function Add-_GSCourseTeacher
         [ValidateNotNullOrEmpty()]
         [String]
         $CourseId,
-        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
         [Alias('PrimaryEmail','Email','Mail', 'Id')]
         [String]
