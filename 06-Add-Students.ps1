@@ -300,7 +300,7 @@ Function invite_class_student()
 
         If ($GCR_Locals.Count -gt 0)
         {
-            $CP_Del += $GCR_Locals.EmailAddress
+            $GCR_Locals.EmailAddress | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher | Out-Null
         }
 
         $DP = @()
