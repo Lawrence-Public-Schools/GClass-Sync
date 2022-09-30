@@ -314,7 +314,7 @@ Function invite_class_student()
         {
             $DI += $GCR_Invitations_Good | Where-Object UserId -In $DP.Id | Where-Object UserId -In $GCR_Invitations.UserId
             $DS += $GCR_Students | Where-Object Id -In $DP.Id | Where-Object Id -In $GCR_Participants.UserId
-            Write-Warning "Remove Students for $($ClassID): $($DP.EmailAddress -join ",")"
+            Write-Verbose "Remove Students for $($ClassID): $($DP.EmailAddress -join ",")"
         }
         If ($DI.Count -gt 0)
         {
@@ -447,7 +447,7 @@ Function add_students()
         }
 
         $students_N_ = @()
-        $students_N_ += $classes_I | invite_class_student -WorkFolder $WorkFolder -Cache_CourseAlias $Cache_CourseAlias -Cache_Course $Cache_Course -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -Cache_Teachers $Users_T -Cache_Students $Users_S -Class_Count $classes_I.Count -Org $Org -Verbose
+        $students_N_ += $classes_I | invite_class_student -WorkFolder $WorkFolder -Cache_CourseAlias $Cache_CourseAlias -Cache_Course $Cache_Course -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -Cache_Teachers $Users_T -Cache_Students $Users_S -Class_Count $classes_I.Count -Org $Org
 
         If ($students_N_.count -gt 0)
         {
