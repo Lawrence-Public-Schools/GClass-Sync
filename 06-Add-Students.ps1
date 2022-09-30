@@ -207,6 +207,8 @@ Function invite_class_student()
         If ($GCR_Locals.Count -gt 0)
         {
             Write-Warning "There are Teachers for $($ClassId) enrolled as Students, converting to Teacher: $($GCR_Locals.EmailAddress -join ",")"
+            $GCR_Locals.EmailAddress | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher | Out-Null
+            $GCR_Locals.EmailAddress | Add-_GSCourseTeacher -CourseId $ClassId | Out-Null
         }
         If ($Outsiders.Count -gt 0)
         {
@@ -298,11 +300,6 @@ Function invite_class_student()
             #$CP_Del += $GCR_Students | Where-Object EmailAddress -NotLike $Domain_Filter | Select-Object -ExpandProperty EmailAddress
         }
 
-        If ($GCR_Locals.Count -gt 0)
-        {
-            $GCR_Locals.EmailAddress | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher | Out-Null
-        }
-
         $DP = @()
         $DS = @()
         $DI = @()
@@ -328,12 +325,6 @@ Function invite_class_student()
         ElseIf ($DS.Count -gt 0)
         {
             $DS | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher -Verbose | Out-Null
-        }
-
-
-        If ($GCR_Locals.Count -gt 0)
-        {
-            $GCR_Locals.EmailAddress | Add-_GSCourseTeacher -CourseId $ClassId | Out-Null
         }
 
         $r = @()
