@@ -1,7 +1,8 @@
 ﻿Using module .\OneRoster.psm1
 
 Param(
-    [String]$WorkFolder = ".\gclass-OneRoster\"
+    [String]$WorkFolder = ".\gclass-OneRoster\",
+    [String]ClassFiler = "*"
 )
 
 Get-Module -Name GClass | Remove-Module; Import-Module .\GClass.psm1
@@ -397,7 +398,8 @@ Function add_students()
     Param
     (
         [Parameter(Mandatory = $true)]
-        [String]$WorkFolder
+        [String]$WorkFolder,
+        [String]$Filter = "*"
     )
 
     If ((Show-PSGSuiteConfig | Select-Object -ExpandProperty ConfigName) -ne "TEACHERS")
@@ -436,7 +438,7 @@ Function add_students()
         $Org = $_
         Write-Host -Object "Importing classes For $($Org.name)"
         $classes_I = @()
-        $classes_I += Read-ORclasses -FolderPath $WorkFolder -Org $Org -LoadXML $true | Where-Object sourcedId -In $GoodLink.sourcedId
+        $classes_I += Read-ORclasses -FolderPath $WorkFolder -Org $Org -LoadXML $true | Where-Object sourcedId -In $GoodLink.sourcedId | Where-Object sourcedId -CLike $Filter
 
         If ($classes_I.Count -eq 0)
         {
@@ -469,4 +471,4 @@ Function add_students()
     Return $r
 }
 
-$r = add_students -WorkFolder $WorkFolder
+$r = add_students -WorkFolder $WorkFolder -Filter $ClassFiler
