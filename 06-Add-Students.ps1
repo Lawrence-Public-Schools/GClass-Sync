@@ -333,7 +333,7 @@ Function invite_class_student()
 
         If ($GCR_Locals.Count -gt 0)
         {
-            $GCR_Locals.EmailAddress | Add-_GSCourseTeacher -CourseId $ClassId -User $Teacher | Out-Null
+            $GCR_Locals.EmailAddress | Add-_GSCourseTeacher -CourseId $ClassId | Out-Null
         }
 
         $r = @()
