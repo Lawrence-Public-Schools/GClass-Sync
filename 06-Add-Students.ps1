@@ -202,11 +202,17 @@ Function invite_class_student()
             $GCR_Locals += $GCR_AllStudents | Where-Object EmailAddress -Like $Domain_Filter
             $Outsiders = $GCR_AllStudents.Profile | Where-Object -Property EmailAddress -EQ -Value ""
         }
+
+        If ($GCR_Locals.Count -gt 0)
+        {
+            Write-Warning "There are Teachers for $($ClassId) enrolled as Students, converting to Teacher: $($GCR_Locals.EmailAddress -join ",")"
+        }
         If ($Outsiders.Count -gt 0)
         {
             Write-Warning "Google Classroom $($ClassId) have outsiders as students"
             $Outsiders | ConvertTo-Json | Write-Warning
         }
+
         $GCR_Invitations = @()
         $GCR_Invitations += Get-_GSCourseInvitationByCourse -CourseId $ClassId -Role STUDENT
         $GCR_Incoming = @()
@@ -288,7 +294,12 @@ Function invite_class_student()
         }
         ElseIf ($OR_Students.Count -eq 0 -and $GCR_Students.Count -gt 0)
         {
-            $CP_Del += $GCR_Students.EmailAddress | Where-Object EmailAddress -NotLike $Domain_Filter
+            #$CP_Del += $GCR_Students | Where-Object EmailAddress -NotLike $Domain_Filter | Select-Object -ExpandProperty EmailAddress
+        }
+
+        If ($GCR_Locals.Count -gt 0)
+        {
+            $CP_Del += $GCR_Locals.EmailAddress
         }
 
         $DP = @()
@@ -316,6 +327,12 @@ Function invite_class_student()
         ElseIf ($DS.Count -gt 0)
         {
             $DS | Remove-_GSCourseStudent -CourseId $ClassId -User $Teacher -Verbose | Out-Null
+        }
+
+
+        If ($GCR_Locals.Count -gt 0)
+        {
+            $GCR_Locals.EmailAddress | Add-_GSCourseTeacher -CourseId $ClassId -User $Teacher | Out-Null
         }
 
         $r = @()
