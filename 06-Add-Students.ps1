@@ -2,7 +2,7 @@
 
 Param(
     [String]$WorkFolder = ".\gclass-OneRoster\",
-    [String]ClassFiler = "*"
+    [String]$ClassFilter = "*"
 )
 
 Get-Module -Name GClass | Remove-Module; Import-Module .\GClass.psm1
@@ -471,4 +471,4 @@ Function add_students()
     Return $r
 }
 
-$r = add_students -WorkFolder $WorkFolder -Filter $ClassFiler
+$r = add_students -WorkFolder $WorkFolder -Filter $ClassFilter
