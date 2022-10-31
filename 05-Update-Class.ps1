@@ -260,6 +260,7 @@ Function update_per_class()
             If ($Lookup_U.Count -gt 0)
             {
                 $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -ExpandProperty EmailAddress | Select-Object -First 1
+            }
         }
         $Users_C_O = @()
         If ($enrollments_C_O.Count -gt 0)
