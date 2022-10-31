@@ -47,12 +47,15 @@ Function update_per_class()
         Write-Host -Object "Importing enrollments"
         $enrollments_I = Read-ORenrollments -FolderPath $WorkPath -Org $Org -LoadXML $true
         Write-Host -Object "Filtering enrollments for primary teachers, normal teachers, aides then admins"
-        $enrollments_I_G = $enrollments_I | Group-Object -Property role
-        $enrollments_O = ($enrollments_I_G | Where-Object -Property Name -In -Value ("teacher","aide","administrator")).Group
+        $enrollments_O = @()
+        $enrollments_O += $enrollments_I | Where-Object -Property role -CLike -Value "teacher"
+        $enrollments_O += $enrollments_I | Where-Object -Property role -CLike -Value "aide"
+        $enrollments_O += $enrollments_I | Where-Object -Property role -CLike -Value "administrator"
 
         $enrollments_O_G = $enrollments_O | Group-Object -Property classSourcedId
         Write-Host -Object "Filtering enrollments for students"
-        $enrollments_S = ($enrollments_I_G | Where-Object -Property Name -Eq -Value "student").Group
+        $enrollments_S = @()
+        $enrollments_S += $enrollments_I | Where-Object -Property role -CLike -Value "student"
         $enrollments_S_G = $enrollments_S | Group-Object -Property classSourcedId
 
         $Default_Domain = (Show-PSGSuiteConfig).Domain
@@ -77,11 +80,6 @@ Function update_per_class()
             $sourcedId | Update-ClassLink -Domain $(Show-PSGSuiteConfig).Domain -Verbose
             Return
         }
-        Else
-        {
-            $OldCourse = $Course
-        }
-        $CourseName = $Course.Name
         $enrollments_S_ = @()
         $enrollments_S_ += $enrollments_S_G | Where-Object -Property Name -CEQ $Class.sourcedId | Select-Object -ExpandProperty Group #$enrollments_S | Limit-OREnrollmentByclassSourcedId -classSourcedId $Class.sourcedId
         $Room = $null
@@ -534,3 +532,4 @@ Function update_classes()
 }
 
 $r = update_classes -WorkFolder $WorkFolder
+$r
