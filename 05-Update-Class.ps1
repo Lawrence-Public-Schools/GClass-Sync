@@ -285,7 +285,7 @@ Function update_per_class()
         }
         If ($null -eq $Teacher -and $users_C.Count -eq 1)
         {
-            $Teacher = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -ExpandProperty EmailAddress
+            $Teacher = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true | Select-Object -ExpandProperty EmailAddress
         }
         If ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
         {
