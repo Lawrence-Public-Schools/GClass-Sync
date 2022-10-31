@@ -259,8 +259,7 @@ Function update_per_class()
             }
             If ($Lookup_U.Count -gt 0)
             {
-                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
-            }
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -ExpandProperty EmailAddress | Select-Object -First 1
         }
         $Users_C_O = @()
         If ($enrollments_C_O.Count -gt 0)
@@ -280,8 +279,12 @@ Function update_per_class()
             }
             If ($Lookup_U.Count -gt 0 -and $null -eq $Teacher)
             {
-                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -First 1 -ExpandProperty EmailAddress
+                $Teacher = $Lookup_U.email | Get-_GSClassroomUserProfile | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -ExpandProperty EmailAddress | Select-Object -First 1
             }
+        }
+        If ($null -eq $Teacher -and $users_C.Count -eq 1)
+        {
+            $Teacher = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true | Where-Object -Property VerifiedTeacher -CEQ -Value "True" | Select-Object -ExpandProperty EmailAddress
         }
         If ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
         {
