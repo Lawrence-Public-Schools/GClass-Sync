@@ -286,10 +286,12 @@ Function update_per_class()
         If ($null -eq $Teacher -and $users_C.Count -eq 1)
         {
             $LoneProfile = $null
-            Write-Warning -Message ("Looking up {0}'s email: {1}" -f $users_C.sourcedId, $users_C.email)
             $LoneProfile = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true
+            If ($null -CEQ $LoneProfile)
+            {
+                $LoneProfile = $FakeProfile
+            }
             $Teacher = $LoneProfile | Select-Object -ExpandProperty EmailAddress
-            Write-Warning -Message ("Found: " -f ($Teacher | ConvertTo-Json))
         }
         If ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
         {
