@@ -285,15 +285,9 @@ Function update_per_class()
         }
         If ($null -eq $Teacher -and $users_C.Count -eq 1)
         {
-            $LoneProfile = $null
-            $LoneProfile = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true
-            If ($null -CEQ $LoneProfile)
-            {
-                $LoneProfile = $FakeProfile
-            }
-            $Teacher = $LoneProfile | Select-Object -ExpandProperty EmailAddress
+            $Teacher = $users_C.email | Get-_GSClassroomUserProfile -SkipCache $true | Select-Object -ExpandProperty EmailAddress
         }
-        If ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
+        ElseIf ($null -eq $Teacher -and $enrollments_S_.Count -gt 0)
         {
             If ($users_C.Count -gt 0 -or $enrollments_C.Count -gt 0)
             {
