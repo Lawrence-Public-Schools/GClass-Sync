@@ -780,7 +780,15 @@ Function Get-_GSCourse
             }
             ElseIf (($Id -as [decimal]))
             {
-                $r += [PSGSHelp_FastSearch.Search]::FindOne($Cache_GSCourse,"Id",$Id) #$Cache_GSCourse | Where-Object -Property Id -ceq -Value $Id
+                Try
+                {
+                    $r += [PSGSHelp_FastSearch.Search]::FindOne($Cache_GSCourse,"Id",$Id) #$Cache_GSCourse | Where-Object -Property Id -ceq -Value $Id
+                }
+                Catch
+                {
+                    $Exc = $_
+                    $Exc | Write-Warning
+                }
             }
 
             If ($r.Count -gt 0)
