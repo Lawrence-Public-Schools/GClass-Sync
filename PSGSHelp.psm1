@@ -15,11 +15,6 @@ namespace PSGSHelp_FastSearch
         {
             List<Object> results = new List<Object>();
 
-            if (null == collection)
-            {
-                return results;
-            }
-
             foreach(PSObject item in collection)
             {
                 if (item.Properties[column].Value.ToString() == data) { results.Add(item); }
@@ -30,11 +25,6 @@ namespace PSGSHelp_FastSearch
 
         public static object FindOne(PSObject[] collection, string column, string data)
         {
-            if (null == collection)
-            {
-                return null;
-            }
-            
             foreach(PSObject item in collection)
             {
                 if (item.Properties[column].Value.ToString() == data) { return item; }
@@ -45,11 +35,6 @@ namespace PSGSHelp_FastSearch
 
         public static object FindOneC(PSObject[] collection, string column, string data)
         {
-            if (null == collection)
-            {
-                return null;
-            }
-
             foreach(PSObject item in collection)
             {
                 if (item.Properties[column].Value.ToString().ToLower() == data.ToLower()) { return item; }
@@ -399,7 +384,11 @@ Function Get-_GSClassroomUserProfile
         }
         ElseIf ($SkipCache -eq $false)
         {
-            If ($UserId -eq "me")
+            If (($null -ceq $Cache_ClassroomUserProfile) -or $Cache_ClassroomUserProfile.Count -ceq 0)
+            {
+                Write-Verbose -Message "Empty Classroom Profile cache"
+            }
+            ElseIf ($UserId -eq "me")
             {
                 $r += [PSGSHelp_FastSearch.Search]::FindOneC($Cache_ClassroomUserProfile,"EmailAddress",$Cache_AdminEMail) #$Cache_ClassroomUserProfile | Where-Object -Property EmailAddress -EQ -Value $Cache_AdminEMail
             }
@@ -785,7 +774,11 @@ Function Get-_GSCourse
                 }
             }
 
-            If (($Id -as [decimal]))
+            If ($null -ceq $Cache_GSCourse -or $Cache_GSCourse.Count -eq 0)
+            {
+                Write-Verbose -Message "Empty Course cache"
+            }
+            ElseIf (($Id -as [decimal]))
             {
                 $r += [PSGSHelp_FastSearch.Search]::FindOne($Cache_GSCourse,"Id",$Id) #$Cache_GSCourse | Where-Object -Property Id -ceq -Value $Id
             }
