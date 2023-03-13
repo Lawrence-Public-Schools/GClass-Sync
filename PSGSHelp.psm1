@@ -787,6 +787,7 @@ Function Get-_GSCourse
                 Catch
                 {
                     $Cache_GSCourse = $null
+                    $Allow_Course_Cache = $false
                     $Exc = $_
                     #$Exc | Write-Warning
                     #$Cache_GSCourse.Count  | Write-Warning
