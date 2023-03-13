@@ -776,7 +776,7 @@ Function Get-_GSCourse
 
             If ($null -ceq $Cache_GSCourse -or $Cache_GSCourse.Count -eq 0)
             {
-                Write-Verbose -Message "Empty Course cache"
+                #Write-Verbose -Message "Empty Course cache"
             }
             ElseIf (($Id -as [decimal]))
             {
@@ -786,8 +786,11 @@ Function Get-_GSCourse
                 }
                 Catch
                 {
+                    $Cache_GSCourse = $null
                     $Exc = $_
-                    $Exc | Write-Warning
+                    #$Exc | Write-Warning
+                    #$Cache_GSCourse.Count  | Write-Warning
+                    #$Id | Write-Warning
                 }
             }
 
