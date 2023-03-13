@@ -16,6 +16,12 @@ namespace OneRoster_FastSearch
         public static List<Object> FindAll(PSObject[] collection, string column, string data)
         {
             List<Object> results = new List<Object>();
+            
+            if (null == collection)
+            {
+                return results;
+            }
+
             foreach(PSObject item in collection)
             {
                 if (item.Properties[column].Value.ToString() == data) { results.Add(item); }
@@ -26,6 +32,11 @@ namespace OneRoster_FastSearch
 
         public static object FindOne(PSObject[] collection, string column, string data)
         {
+            if (null == collection)
+            {
+                return null;
+            }
+
             foreach(PSObject item in collection)
             {
                 if (item.Properties[column].Value.ToString() == data) { return item; }
