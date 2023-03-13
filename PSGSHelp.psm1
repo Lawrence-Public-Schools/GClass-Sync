@@ -1215,6 +1215,12 @@ Function Update-_GSCourseOwner
                     Start-Sleep -Seconds 30
                     Return Update-_GSCourseState -Id $Id -OwnerId $OwnerId -BypassCache $BypassCache -SkipCache $SkipCache -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::BadRequest)
+                {
+                    Write-Warning -Message ("The old Teacher account is disabled")
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Return Get-_GSCourse -Id $Id -BypassCache $false -SkipCache $SkipCache -CacheOnly $true -Cache_GSCourse $Cache_GSCourse -Cache_GSCourseAlias $Cache_GSCourseAlias -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
