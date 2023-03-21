@@ -75,6 +75,7 @@ Function process_fixup_user
     {
         If ($user_E.role -In ([OR_RoleType]::parent,[OR_RoleType]::guardian,[OR_RoleType]::relative))
         {
+            Return
             Write-Progress -Activity "Fixing up user email addresses" -Id 0 -CurrentOperation $user_E.sourcedId
             Return $user_E
         }
