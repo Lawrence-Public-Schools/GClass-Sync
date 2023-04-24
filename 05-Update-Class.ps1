@@ -103,7 +103,7 @@ Function update_per_class()
                     }
                     Else
                     {
-                        $Course = Update-_GSCourseState -Id $ClassId -CourseState ARCHIVED
+                        $Course = Update-_GSCourseState -Id $ClassId -CourseState ARCHIVED -Verbose
                         Write-Verbose "Updating Empty $($ClassId) Of Real"
                         $bState = $true
                     }
