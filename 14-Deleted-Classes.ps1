@@ -37,7 +37,7 @@ Function Find-classes
     If($BadCaches.Count -gt 0)
     {
         Write-Host -Object "Caching classes links: $($BadCaches.Count)"
-        $BadCaches.CourseAlias | Get-_GSCourse -BypassCache $true | Out-Null
+        #$BadCaches.CourseAlias | Get-_GSCourse -BypassCache $true | Out-Null
         $BadCaches.sourcedId | Update-ClassLink -SkipCache $false -Domain $(Show-PSGSuiteConfig).Domain
     }
     Else
