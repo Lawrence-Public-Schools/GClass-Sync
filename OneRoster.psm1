@@ -16,7 +16,7 @@ namespace OneRoster_FastSearch
         public static List<Object> FindAll(PSObject[] collection, string column, string data)
         {
             List<Object> results = new List<Object>();
-            
+
             if (null == collection)
             {
                 return results;
