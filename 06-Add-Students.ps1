@@ -147,7 +147,11 @@ Function invite_class_student()
         If ($null -eq $Teacher)
         {
             $PT = $null
-            $PT = Get-_GSClassroomUserProfile -UserId $GCR.OwnerId -BypassCache $true -Cache_ClassroomUserProfile $Cache_ClassroomUserProfile -StoreBad $true
+            If ($null -ne $GCR.OwnerId)
+            {
+                $PT = Get-_GSClassroomUserProfile -UserId $GCR.OwnerId -BypassCache $true -Cache_ClassroomUserProfile
+            }
+            $Cache_ClassroomUserProfile -StoreBad $true
             If ($null -ne $PT -and $PT.EmailAddress -ne "")
             {
                 $Teacher = $PT.EmailAddress
