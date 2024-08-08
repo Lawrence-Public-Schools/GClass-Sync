@@ -191,6 +191,7 @@ Function make_missing_classes
             $HomeRoom = "HomeRoom"
         }
         $Room = "$($HomeRoom) At $($Org.name)"
+        $sourcedId = $Class.sourcedId
         $Section = "$($Class.title) (PowerSchool #$($sourcedId)) of School $($Org.name) (PowerSchool #$($Org.sourcedId))"
         $r = $null
         $r = New-_GSCourse -Name $Class.title -OwnerId $Teacher -Id $ClassId -Section $Section -Room $Room -CourseState DECLINED -FallBackId $FakeTeacher
