@@ -1725,6 +1725,10 @@ Function Confirm-_GSCourseInvitation
                     Start-Sleep -Seconds 30
                     Return Confirm-_GSCourseInvitation -Id $Id -User $User -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::Conflict)
+                {
+                    Return
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
