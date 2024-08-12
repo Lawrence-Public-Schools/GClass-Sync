@@ -189,6 +189,10 @@ Function invite_class_student()
         }
         If ($null -eq $Teacher)
         {
+            $Teacher = $ClassLink_.EmailAddress
+        }
+        If ($null -eq $Teacher)
+        {
             Write-Host -Object "Could find a teacher to act as in Class: $($Class.sourcedid)"
             Return
         }
