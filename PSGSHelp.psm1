@@ -1365,6 +1365,13 @@ Function Get-_GSCourseParticipant
                     Start-Sleep -Seconds 30
                     Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
                 }
+                If ($HttpStatusCode -eq [System.Net.HttpStatusCode]::InternalServerError)
+                {
+                    Write-Warning -Message "Google Classroom Service was disconnected"
+                    Write-Verbose -Message $Exc.Exception.InnerException
+                    Start-Sleep -Seconds 1
+                    Return Get-_GSCourseParticipant -CourseId $CourseId -Role $Role -Verbose
+                }
                 If ($HttpStatusCode -eq 429)
                 {
                     Invoke-HTTP429
