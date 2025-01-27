@@ -148,13 +148,9 @@ Function update_per_class()
                 If ($enrollments_S_.Count -eq 0) {}
                 Else
                 {
-                    If ($Course.OwnerId -eq $FakeProfile.Id) {}
-                    Else
-                    {
-                        $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
-                        Write-Verbose "Resetting Filled $($ClassId) Of Real"
-                        $bState = $true
-                    }
+                    $Course = Update-_GSCourseState -Id $ClassId -CourseState PROVISIONED
+                    Write-Verbose "Resetting Filled $($ClassId) Of Real"
+                    $bState = $true
                 }
             }
             default
