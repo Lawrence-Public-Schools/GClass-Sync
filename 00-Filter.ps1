@@ -103,15 +103,18 @@ Function process_fixup_user
         Write-Progress -Activity "Fixing up user email addresses" -Id 0 -CurrentOperation $user_E.email
         If ($user_E.email -like "*@$($TEACHERS_Domain)")
         {
+            $user_E.email = $user_E.email.ToLower()
             Return $user_E
         }
         If ($user_E.email -like "*@$($TEACHERS_Domain_omc)")
         {
             $user_E.email = $user_E.email -replace "@$($TEACHERS_Domain_omc)","@$($TEACHERS_Domain)"
+            $user_E.email = $user_E.email.ToLower()
             Return $user_E
         }
         If ($user_E.email -like "*@*.$($TEACHERS_Domain)")
         {
+            $user_E.email = $user_E.email.ToLower()
             Return $user_E
         }
         If ($user_E.email -eq "")
