@@ -114,6 +114,10 @@ Function process_fixup_user
         {
             Return $user_E
         }
+        If ($user_E.email -eq "")
+        {
+            Return
+        }
         If ($true -eq $user_E.enabledUser)
         {
             Write-Warning "Found active user outside of domain: $($user_E.email): $($user_E.sourcedId)"
